@@ -1,4 +1,6 @@
 
+from typing import Any
+
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from app.core.i18n import t
@@ -59,28 +61,54 @@ def get_search_results_keyboard(
 
 
 def get_book_actions_keyboard(
-    book_id: int, is_favorite: bool, lang: str = "uz"
+    book_or_id: int | BookDTO, is_favorite: bool, lang: str = "uz"
 ) -> InlineKeyboardMarkup:
-    """Action buttons for a single book card."""
+    """Action buttons for a single book card with media support."""
+    if isinstance(book_or_id, BookDTO):
+        book_id = book_or_id.id or 0
+        book = book_or_id
+    else:
+        book_id = book_or_id
+        book = None
+
     fav_text = t(lang, "book.btn_remove_favorite" if is_favorite else "book.btn_add_favorite")
 
-    buttons = [
-        [
-            InlineKeyboardButton(text=t(lang, "book.btn_details"), callback_data=f"book:details:{book_id}"),
-            InlineKeyboardButton(text=t(lang, "book.btn_ai_analysis"), callback_data=f"book:ai:{book_id}"),
-        ],
-        [
-            InlineKeyboardButton(text=fav_text, callback_data=f"book:fav:{book_id}"),
-            InlineKeyboardButton(text=t(lang, "book.btn_reading_list"), callback_data=f"book:readlist:{book_id}"),
-        ],
-        [
-            InlineKeyboardButton(text=t(lang, "book.btn_legal_sources"), callback_data=f"book:legal:{book_id}"),
-            InlineKeyboardButton(text=t(lang, "book.btn_similar"), callback_data=f"book:similar:{book_id}"),
-        ],
-        [
-            InlineKeyboardButton(text=t(lang, "book.btn_back"), callback_data="search:back"),
-        ],
-    ]
+    buttons: list[list[InlineKeyboardButton]] = []
+
+    # Quick external media buttons if available
+    media_row: list[InlineKeyboardButton] = []
+    if book and book.reading_url:
+        media_row.append(InlineKeyboardButton(text="📖 Mutolaa", url=book.reading_url))
+    if book and getattr(book, "file_url", None):
+        fmt = getattr(book, "file_format", "PDF") or "PDF"
+        media_row.append(InlineKeyboardButton(text=f"📥 Yuklab olish ({fmt})", url=book.file_url))
+    if media_row:
+        buttons.append(media_row)
+
+    av_row: list[InlineKeyboardButton] = []
+    if book and getattr(book, "audio_url", None):
+        av_row.append(InlineKeyboardButton(text="🎧 Audiokitob", url=book.audio_url))
+    if book and getattr(book, "video_url", None):
+        av_row.append(InlineKeyboardButton(text="🎬 Video sharh", url=book.video_url))
+    if av_row:
+        buttons.append(av_row)
+
+    # Core action buttons
+    buttons.append([
+        InlineKeyboardButton(text=t(lang, "book.btn_details"), callback_data=f"book:details:{book_id}"),
+        InlineKeyboardButton(text=t(lang, "book.btn_ai_analysis"), callback_data=f"book:ai:{book_id}"),
+    ])
+    buttons.append([
+        InlineKeyboardButton(text=fav_text, callback_data=f"book:fav:{book_id}"),
+        InlineKeyboardButton(text=t(lang, "book.btn_reading_list"), callback_data=f"book:readlist:{book_id}"),
+    ])
+    buttons.append([
+        InlineKeyboardButton(text=t(lang, "book.btn_legal_sources"), callback_data=f"book:legal:{book_id}"),
+        InlineKeyboardButton(text=t(lang, "book.btn_similar"), callback_data=f"book:similar:{book_id}"),
+    ])
+    buttons.append([
+        InlineKeyboardButton(text=t(lang, "book.btn_back"), callback_data="search:back"),
+    ])
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
@@ -270,3 +298,50 @@ def get_catalog_control_keyboard(
     ])
 
     return InlineKeyboardMarkup(inline_keyboard=buttons)
+
+
+def get_catalog_grid_keyboard(
+    books: list[Any],
+    page: int,
+    total_pages: int,
+    lang: str = "uz",
+) -> InlineKeyboardMarkup:
+    """Generate interactive Grid keyboard matching the serial/movie bot UX in screenshot."""
+    buttons: list[list[InlineKeyboardButton]] = []
+
+    # Row 1: Search actions
+    buttons.append([
+        InlineKeyboardButton(text="🚨 Nomi orqali qidiruv", callback_data="cat:search"),
+        InlineKeyboardButton(text="🔍 Kod orqali qidiruv", callback_data="cat:code_prompt"),
+    ])
+
+    # Row 2+: Book buttons in 2 columns
+    row: list[InlineKeyboardButton] = []
+    for b in books:
+        code_tag = f"[{b.code}] " if getattr(b, "code", None) else ""
+        title = getattr(b, "original_title", getattr(b, "title", "Kitob"))
+        label = f"{code_tag}{truncate_text(title, 20)}"
+        row.append(InlineKeyboardButton(text=label, callback_data=f"book:view:{b.id}"))
+        if len(row) == 2:
+            buttons.append(row)
+            row = []
+    if row:
+        buttons.append(row)
+
+    # Navigation row
+    nav_row: list[InlineKeyboardButton] = []
+    if page > 1:
+        nav_row.append(InlineKeyboardButton(text="⬅️ Oldingi", callback_data=f"cat:grid:{page - 1}"))
+    nav_row.append(InlineKeyboardButton(text=f"📄 {page} / {total_pages}", callback_data="noop"))
+    if page < total_pages:
+        nav_row.append(InlineKeyboardButton(text="Keyingi ➡️", callback_data=f"cat:grid:{page + 1}"))
+    buttons.append(nav_row)
+
+    # Toggle to full cards / reset
+    buttons.append([
+        InlineKeyboardButton(text="🖼️ Kartochkalar ko'rinishi", callback_data=f"cat:page:{page}:all:all"),
+        InlineKeyboardButton(text="🔄 Filtrlarni tozalash", callback_data="cat:reset"),
+    ])
+
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
+

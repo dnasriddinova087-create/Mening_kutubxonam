@@ -73,14 +73,65 @@
       </div>
     </div>
 
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div class="form-group">
+        <label for="code">Kitob qidiruv kodi (Tartib raqami) *</label>
+        <input type="number" id="code" name="code" value="{{ book.code if book and book.code else next_code }}" placeholder="1, 2, 3..." required>
+        <small style="color: var(--text-muted); font-size: 0.8rem;">Foydalanuvchilar ushbu raqam orqali kitobni bir zumda topishadi.</small>
+      </div>
+      <div class="form-group">
+        <label for="book_status">Katalogdagi holati</label>
+        <select id="book_status" name="book_status">
+          <option value="published" {% if not book or book.status == 'published' %}selected{% endif %}>✅ Nashr qilingan (Katalogda ko'rinadi)</option>
+          <option value="draft" {% if book and book.status == 'draft' %}selected{% endif %}>📝 Qoralama (Faqat adminga ko'rinadi)</option>
+        </select>
+      </div>
+    </div>
+
     <div class="form-group">
       <label for="cover_url">Muqova rasm URL (HTTPS)</label>
       <input type="url" id="cover_url" name="cover_url" value="{{ book.cover_url if book and book.cover_url else '' }}">
     </div>
 
-    <div class="form-group">
-      <label for="reading_url">Qonuniy elektron o'qish havolasi URL (HTTPS)</label>
-      <input type="url" id="reading_url" name="reading_url" value="{{ book.reading_url if book and book.reading_url else '' }}">
+    <div style="background: rgba(47, 129, 247, 0.05); border: 1px solid rgba(47, 129, 247, 0.2); border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem;">
+      <h3 style="font-size: 1rem; margin-top: 0; margin-bottom: 0.8rem; color: #58a6ff;">🎧 Audio va 🎬 Video materiallar</h3>
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="audio_url">Audiokitob havolasi (MP3 / Havola)</label>
+          <input type="url" id="audio_url" name="audio_url" placeholder="https://... audiokitob havolasi" value="{{ book.audio_url if book and book.audio_url else '' }}">
+        </div>
+        <div class="form-group">
+          <label for="audio_duration">Davomiyligi</label>
+          <input type="text" id="audio_duration" name="audio_duration" placeholder="masalan: 4 soat 20 daqiqa" value="{{ book.audio_duration if book and book.audio_duration else '' }}">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom: 0;">
+        <label for="video_url">Video sharh / Muallif intervyusi URL (YouTube / Havola)</label>
+        <input type="url" id="video_url" name="video_url" placeholder="https://... video havolasi" value="{{ book.video_url if book and book.video_url else '' }}">
+      </div>
+    </div>
+
+    <div style="background: rgba(35, 134, 54, 0.05); border: 1px solid rgba(35, 134, 54, 0.2); border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem;">
+      <h3 style="font-size: 1rem; margin-top: 0; margin-bottom: 0.8rem; color: #3fb950;">📥 Elektron kitob fayli</h3>
+      <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="file_format">Fayl formati</label>
+          <select id="file_format" name="file_format">
+            <option value="PDF" {% if not book or book.file_format == 'PDF' %}selected{% endif %}>PDF</option>
+            <option value="EPUB" {% if book and book.file_format == 'EPUB' %}selected{% endif %}>EPUB</option>
+            <option value="TXT" {% if book and book.file_format == 'TXT' %}selected{% endif %}>TXT</option>
+            <option value="LINK" {% if book and book.file_format == 'LINK' %}selected{% endif %}>Faqat havola</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="file_url">Elektron kitob yuklab olish havolasi (URL)</label>
+          <input type="url" id="file_url" name="file_url" placeholder="https://... fayl havolasi" value="{{ book.file_url if book and book.file_url else '' }}">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom: 0;">
+        <label for="reading_url">Qonuniy elektron o'qish havolasi URL (HTTPS)</label>
+        <input type="url" id="reading_url" name="reading_url" value="{{ book.reading_url if book and book.reading_url else '' }}">
+      </div>
     </div>
 
     <button type="submit" class="btn btn-success" style="width: 100%; justify-content: center; margin-top: 1rem;">

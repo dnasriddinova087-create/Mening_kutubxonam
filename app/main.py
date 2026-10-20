@@ -7,6 +7,7 @@ from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.types import BotCommand, BotCommandScopeDefault
 
 from app.bot.handlers import (
+    admin,
     book_detail,
     catalog,
     errors,
@@ -36,6 +37,7 @@ async def register_bot_commands(bot: Bot) -> None:
         BotCommand(command="profile", description="Profil va statistika"),
         BotCommand(command="recommend", description="Kitob tavsiyalari"),
         BotCommand(command="language", description="Tilni o'zgartirish"),
+        BotCommand(command="admin", description="Admin paneli (Super Admin)"),
         BotCommand(command="help", description="Yordam yo'riqnomasi"),
         BotCommand(command="cancel", description="Amalni bekor qilish"),
     ]
@@ -116,6 +118,7 @@ async def main() -> None:
 
     # Include Handlers - Specific command & button routers first, search text catch-all last
     dp.include_router(start.router)
+    dp.include_router(admin.router)
     dp.include_router(catalog.router)
     dp.include_router(language.router)
     dp.include_router(favorites.router)

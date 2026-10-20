@@ -38,12 +38,38 @@ async def init_db() -> None:
     try:
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
-            # Safe backward-compatible column migration
+            # Safe backward-compatible column migrations
+            from sqlalchemy import text
             try:
-                from sqlalchemy import text
                 await conn.execute(text("ALTER TABLE users ADD COLUMN preferred_book_languages JSON DEFAULT '[]'"))
             except Exception:
-                pass  # column already exists or table freshly created
+                pass
+
+            book_columns = [
+                ("code", "INTEGER"),
+                ("file_url", "TEXT"),
+                ("file_format", "VARCHAR(32) DEFAULT 'PDF'"),
+                ("audio_url", "TEXT"),
+                ("audio_duration", "VARCHAR(64)"),
+                ("video_url", "TEXT"),
+                ("extra_materials", "JSON DEFAULT '[]'"),
+                ("ai_analysis", "JSON DEFAULT '{}'"),
+                ("status", "VARCHAR(32) DEFAULT 'published'"),
+                ("pages", "INTEGER"),
+                ("translations", "JSON DEFAULT '{}'"),
+            ]
+            for col_name, col_type in book_columns:
+                try:
+                    await conn.execute(text(f"ALTER TABLE books ADD COLUMN {col_name} {col_type}"))
+                except Exception:
+                    pass
+
+        # Automatically assign sequential book codes (1, 2, 3...) to any existing books
+        async with AsyncSessionLocal() as session:
+            from app.database.repositories.book_repo import BookRepository
+            repo = BookRepository(session)
+            await repo.assign_missing_codes()
+
         logger.info("Database initialized successfully.")
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")

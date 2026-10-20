@@ -25,12 +25,13 @@
     <table>
       <thead>
         <tr>
+          <th>Kod</th>
           <th>ID</th>
           <th>Muqova</th>
           <th>Nomi</th>
           <th>Muallif</th>
           <th>Til</th>
-          <th>Manba</th>
+          <th>Materiallar</th>
           <th>Kirish turi</th>
           <th>Holat</th>
           <th>Amallar</th>
@@ -39,6 +40,7 @@
       <tbody>
         {% for book in books %}
         <tr>
+          <td><span class="badge" style="background: #238636; color: #fff; font-weight: 700;">#{{ book.code or '-' }}</span></td>
           <td>{{ book.id }}</td>
           <td>
             {% if book.cover_url %}
@@ -52,7 +54,13 @@
           <td>
             <span class="badge" style="background: rgba(47, 129, 247, 0.15); color: #58a6ff;">{{ (book.language or 'noma\'lum')|upper }}</span>
           </td>
-          <td><span class="badge" style="background: rgba(255,255,255,0.1);">{{ book.source }}</span></td>
+          <td>
+            <div style="display: flex; gap: 0.3rem;">
+              {% if book.file_url %}<span title="Elektron kitob ({{ book.file_format or 'PDF' }})">📥</span>{% endif %}
+              {% if book.audio_url %}<span title="Audiokitob">🎧</span>{% endif %}
+              {% if book.video_url %}<span title="Video sharh">🎬</span>{% endif %}
+            </div>
+          </td>
           <td>
             <span class="badge badge-{{ book.access_type }}">{{ book.access_type }}</span>
           </td>

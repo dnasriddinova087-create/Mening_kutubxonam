@@ -40,12 +40,15 @@ def format_book_caption(book: BookDTO, lang: str = "uz") -> str:
     title_escaped = escape_html(book.title)
     authors_escaped = escape_html(book.authors_display)
 
+    code_str = f" [#{book.code}]" if book.code else ""
     lines = [
-        f"📚 <b>{title_escaped}</b>",
+        f"📚 <b>{title_escaped}</b>{code_str}",
         f"✍️ <b>{t(lang, 'book.authors', authors=authors_escaped)}</b>",
     ]
 
     meta_parts = []
+    if book.code:
+        meta_parts.append(f"🆔 Kod: <b>#{book.code}</b>")
     if book.published_date:
         meta_parts.append(f"📅 {escape_html(book.published_date[:4])}")
     if book.publisher:
@@ -59,12 +62,23 @@ def format_book_caption(book: BookDTO, lang: str = "uz") -> str:
     if book.genres:
         lines.append(f"🏷️ <i>{escape_html(', '.join(book.genres[:3]))}</i>")
 
+    media_badges = []
+    if getattr(book, "audio_url", None):
+        media_badges.append("🎧 Audiokitob")
+    if getattr(book, "video_url", None):
+        media_badges.append("🎬 Video sharh")
+    if getattr(book, "file_url", None):
+        fmt = getattr(book, "file_format", "PDF") or "PDF"
+        media_badges.append(f"📥 {fmt}")
+    if media_badges:
+        lines.append("⚡ " + " • ".join(media_badges))
+
     lines.append("")
 
     # Clean description
     raw_desc = clean_html_tags(book.description or "")
     if raw_desc:
-        short_desc = truncate_text(raw_desc, 350)
+        short_desc = truncate_text(raw_desc, 300)
         lines.append(f"📖 <b>{t(lang, 'book.about_header')}</b>\n{escape_html(short_desc)}")
     else:
         lines.append(f"📖 <i>{t(lang, 'book.no_description')}</i>")
@@ -85,23 +99,43 @@ def format_book_details(book: BookDTO, lang: str = "uz") -> str:
     title_escaped = escape_html(book.title)
     authors_escaped = escape_html(book.authors_display)
 
+    code_str = f" [#{book.code}]" if book.code else ""
     lines = [
-        f"📚 <b>{title_escaped}</b>",
+        f"📚 <b>{title_escaped}</b>{code_str}",
         "",
         f"✍️ {t(lang, 'book.authors', authors=authors_escaped)}",
     ]
 
+    if book.code:
+        lines.append(f"🆔 <b>Kitob kodi:</b> <code>#{book.code}</code> (Qidiruv kodi)")
     if book.published_date:
         lines.append(f"📅 {t(lang, 'book.year', year=escape_html(book.published_date))}")
     if book.publisher:
         lines.append(f"🏢 {t(lang, 'book.publisher', publisher=escape_html(book.publisher))}")
     if book.isbn:
         lines.append(f"🔢 {t(lang, 'book.isbn', isbn=escape_html(book.isbn))}")
+    if getattr(book, "pages", None):
+        lines.append(f"📄 <b>Sahifalar soni:</b> {book.pages} bet")
     if book.genres:
         lines.append(f"🏷️ {t(lang, 'book.genres', genres=escape_html(', '.join(book.genres)))}")
     if book.language:
         lines.append(f"🌐 {t(lang, 'book.language', language=escape_html(book.language.upper()))}")
     lines.append(f"🏛️ {t(lang, 'book.source', source=escape_html(book.source.replace('_', ' ').title()))}")
+
+    # Media materials block
+    media_lines = []
+    if getattr(book, "audio_url", None):
+        duration = f" ({book.audio_duration})" if getattr(book, "audio_duration", None) else ""
+        media_lines.append(f"🎧 <a href=\"{escape_html(book.audio_url)}\"><b>Audiokitobni tinglash</b></a>{duration}")
+    if getattr(book, "video_url", None):
+        media_lines.append(f"🎬 <a href=\"{escape_html(book.video_url)}\"><b>Video sharhni tomosha qilish</b></a>")
+    if getattr(book, "file_url", None):
+        fmt = getattr(book, "file_format", "PDF") or "PDF"
+        media_lines.append(f"📥 <a href=\"{escape_html(book.file_url)}\"><b>Elektron kitobni yuklab olish ({fmt})</b></a>")
+    if media_lines:
+        lines.append("")
+        lines.append("⚡ <b>Multimedia va elektron materiallar:</b>")
+        lines.extend(media_lines)
 
     lines.append("")
     lines.append(f"📖 <b>{t(lang, 'book.about_header')}</b>")

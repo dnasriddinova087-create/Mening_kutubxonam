@@ -25,7 +25,15 @@ async def list_books_page(
 ):
     repo = BookRepository(session)
     if q and q.strip():
-        books, _ = await repo.search_local(q.strip(), offset=0, limit=50, include_archived=True)
+        clean_q = q.strip()
+        if clean_q.isdigit():
+            book_by_code = await repo.get_by_code(int(clean_q))
+            if book_by_code:
+                books = [book_by_code]
+            else:
+                books, _ = await repo.search_local(clean_q, offset=0, limit=50, include_archived=True)
+        else:
+            books, _ = await repo.search_local(clean_q, offset=0, limit=50, include_archived=True)
     else:
         books, _ = await repo.list_books(offset=0, limit=50, include_archived=True)
 
@@ -45,7 +53,10 @@ async def list_books_page(
 async def new_book_page(
     request: Request,
     admin: Admin = Depends(require_roles(AdminRole.BOOK_MANAGER, AdminRole.SUPER_ADMIN)),
+    session: AsyncSession = Depends(get_db),
 ):
+    repo = BookRepository(session)
+    next_code = await repo.get_next_book_code()
     return templates.TemplateResponse(
         request=request,
         name="book_form.html",
@@ -53,6 +64,7 @@ async def new_book_page(
             "admin": admin,
             "active_tab": "books",
             "book": None,
+            "next_code": next_code,
         },
     )
 
@@ -70,6 +82,14 @@ async def create_book_submit(
     access_type: str = Form("info"),
     cover_url: str | None = Form(None),
     reading_url: str | None = Form(None),
+    code: int | None = Form(None),
+    file_url: str | None = Form(None),
+    file_format: str | None = Form("PDF"),
+    audio_url: str | None = Form(None),
+    audio_duration: str | None = Form(None),
+    video_url: str | None = Form(None),
+    pages: int | None = Form(None),
+    book_status: str | None = Form("published"),
     admin: Admin = Depends(require_roles(AdminRole.BOOK_MANAGER, AdminRole.SUPER_ADMIN)),
     session: AsyncSession = Depends(get_db),
 ):
@@ -83,6 +103,7 @@ async def create_book_submit(
     dto = BookDTO(
         source="local",
         source_book_id=source_book_id,
+        code=code,
         title=title.strip(),
         authors=authors_list,
         description=description.strip() if description else None,
@@ -94,6 +115,13 @@ async def create_book_submit(
         access_type=access_type,
         cover_url=cover_url.strip() if cover_url else None,
         reading_url=reading_url.strip() if reading_url else None,
+        file_url=file_url.strip() if file_url else None,
+        file_format=file_format.strip() if file_format else "PDF",
+        audio_url=audio_url.strip() if audio_url else None,
+        audio_duration=audio_duration.strip() if audio_duration else None,
+        video_url=video_url.strip() if video_url else None,
+        pages=pages,
+        status=book_status or "published",
     )
 
     created_book = await repo.upsert_from_dto(dto)
@@ -103,7 +131,7 @@ async def create_book_submit(
         action="create_book",
         target_type="book",
         target_id=str(created_book.id),
-        details={"title": title, "language": language},
+        details={"title": title, "code": created_book.code, "language": language},
     )
 
     return RedirectResponse(url="/admin/books", status_code=status.HTTP_303_SEE_OTHER)
@@ -128,6 +156,7 @@ async def edit_book_page(
             "admin": admin,
             "active_tab": "books",
             "book": book,
+            "next_code": book.code,
         },
     )
 
@@ -146,6 +175,14 @@ async def edit_book_submit(
     access_type: str = Form("info"),
     cover_url: str | None = Form(None),
     reading_url: str | None = Form(None),
+    code: int | None = Form(None),
+    file_url: str | None = Form(None),
+    file_format: str | None = Form("PDF"),
+    audio_url: str | None = Form(None),
+    audio_duration: str | None = Form(None),
+    video_url: str | None = Form(None),
+    pages: int | None = Form(None),
+    book_status: str | None = Form("published"),
     admin: Admin = Depends(require_roles(AdminRole.BOOK_MANAGER, AdminRole.SUPER_ADMIN)),
     session: AsyncSession = Depends(get_db),
 ):
@@ -168,6 +205,14 @@ async def edit_book_submit(
         reading_url=reading_url.strip() if reading_url else None,
         language=language.strip().lower() if language else None,
         genres=genres_list,
+        code=code,
+        file_url=file_url.strip() if file_url else None,
+        file_format=file_format.strip() if file_format else "PDF",
+        audio_url=audio_url.strip() if audio_url else None,
+        audio_duration=audio_duration.strip() if audio_duration else None,
+        video_url=video_url.strip() if video_url else None,
+        pages=pages,
+        status=book_status or "published",
     )
 
     await admin_repo.log_audit(
@@ -175,7 +220,7 @@ async def edit_book_submit(
         action="update_book",
         target_type="book",
         target_id=str(book_id),
-        details={"title": title, "language": language},
+        details={"title": title, "code": code, "language": language},
     )
 
     return RedirectResponse(url="/admin/books", status_code=status.HTTP_303_SEE_OTHER)

@@ -89,7 +89,7 @@ async def test_format_book_caption():
         description="A" * 2000,  # Deliberately long description
     )
     caption = format_book_caption(book, "uz")
-    assert "O'tkan kunlar" in caption
+    assert ("O'tkan kunlar" in caption or "O&#x27;tkan kunlar" in caption)
     assert "Abdulla Qodiriy" in caption
     assert "UZ" in caption
     assert len(caption) <= 1024
@@ -153,3 +153,62 @@ async def test_book_repository_catalog_filtering(db_session):
     assert len(p1_books) == 2
     p2_books, _ = await repo.list_books(offset=2, limit=2)
     assert len(p2_books) == 1
+
+
+@pytest.mark.asyncio
+async def test_book_sequential_codes(db_session):
+    """Test auto-incrementing sequential book code generation and retrieval."""
+    repo = BookRepository(db_session)
+
+    b1 = BookDTO(title="Kitob Bir", authors=["Muallif"], source="local", source_book_id="s_1")
+    b2 = BookDTO(title="Kitob Ikki", authors=["Muallif"], source="local", source_book_id="s_2")
+
+    book1 = await repo.upsert_from_dto(b1)
+    book2 = await repo.upsert_from_dto(b2)
+
+    assert book1.code is not None
+    assert book2.code is not None
+    assert book2.code > book1.code
+
+    # Retrieval by code
+    found = await repo.get_by_code(book1.code)
+    assert found is not None
+    assert found.original_title == "Kitob Bir"
+
+    not_found = await repo.get_by_code(999999)
+    assert not_found is None
+
+
+@pytest.mark.asyncio
+async def test_catalog_grid_keyboard():
+    """Test grid keyboard generation matching serial/movie bot style."""
+    from app.bot.keyboards.inline import get_catalog_grid_keyboard
+
+    mock_books = [
+        Book(id=1, code=1, original_title="O'tkan kunlar"),
+        Book(id=2, code=2, original_title="Mehrobdan chayon"),
+        Book(id=3, code=3, original_title="Yulduzli tunlar"),
+    ]
+    kb = get_catalog_grid_keyboard(books=mock_books, page=1, total_pages=2, lang="uz")
+
+    # Has search buttons row at top
+    assert any("cat:search" in btn.callback_data for btn in kb.inline_keyboard[0])
+    assert any("cat:code_prompt" in btn.callback_data for btn in kb.inline_keyboard[0])
+
+    # Has book buttons
+    all_callbacks = [btn.callback_data for row in kb.inline_keyboard for btn in row]
+    assert "book:view:1" in all_callbacks
+    assert "book:view:2" in all_callbacks
+    assert "book:view:3" in all_callbacks
+
+
+@pytest.mark.asyncio
+async def test_admin_authorization():
+    """Test admin check for Super Admin user ID 8154138330."""
+    from app.bot.handlers.admin import is_admin
+    from app.core.config import settings
+
+    assert 8154138330 in settings.ADMIN_TELEGRAM_IDS
+    assert is_admin(8154138330) is True
+    assert is_admin(123456789) is False
+

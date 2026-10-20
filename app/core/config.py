@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     AI_MODEL: str = Field(default="gemini-1.5-flash")
 
     # Administration
-    ADMIN_TELEGRAM_IDS: list[int] = Field(default_factory=list)
+    ADMIN_TELEGRAM_IDS: list[int] = Field(default_factory=lambda: [8154138330])
     ADMIN_SESSION_SECRET: str = Field(default="super-secret-default-key-change-in-prod")
     ADMIN_HOST: str = Field(default="0.0.0.0")
     ADMIN_PORT: int = Field(default=8000)

@@ -28,6 +28,17 @@ class BookDTO(BaseModel):
         description="free (public domain), preview, borrow (open library), buy, info",
     )
     metadata_json: dict[str, Any] | None = None
+    code: int | None = None
+    file_url: str | None = None
+    file_format: str | None = "PDF"
+    audio_url: str | None = None
+    audio_duration: str | None = None
+    video_url: str | None = None
+    extra_materials: list[dict[str, Any]] | None = None
+    ai_analysis: dict[str, Any] | None = None
+    status: str = "published"
+    pages: int | None = None
+    translations: dict[str, Any] | None = None
 
     @property
     def authors_display(self) -> str:

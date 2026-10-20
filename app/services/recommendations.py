@@ -7,6 +7,7 @@ from app.schemas.book import BookDTO
 # Curated perennial masterpieces across Uzbek, World, and Russian literature
 CURATED_RECOMMENDATIONS = [
     {
+        "code": 1,
         "title": "O'tkan kunlar",
         "authors": ["Abdulla Qodiriy"],
         "description": "O'zbek adabiyotining birinchi romani bo'lib, XIX asr o'rtalaridagi Toshkent va Qo'qon xonligi davridagi murakkab ijtimoiy-tarixiy voqealar va Otabek bilan Kumushning fojiali sevgisi haqida hikoya qiladi.",
@@ -17,8 +18,14 @@ CURATED_RECOMMENDATIONS = [
         "cover_url": "https://covers.openlibrary.org/b/id/12833521-L.jpg",
         "access_type": "free",
         "reading_url": "https://ziyouz.com",
+        "file_url": "https://n.ziyouz.com/kutubxona/category/11-o-zbek-nasri?download=166:abdulla-qodiriy-o-tkan-kunlar-roman",
+        "file_format": "PDF",
+        "audio_url": "https://ziyouz.com",
+        "audio_duration": "6 soat 15 daqiqa",
+        "pages": 384,
     },
     {
+        "code": 2,
         "title": "Mehrobdan chayon",
         "authors": ["Abdulla Qodiriy"],
         "description": "Xudoyorxon davridagi saroy fitnalari, adolat va qabohat o'rtasidagi kurash hamda Anvar va Ra'noning pok muhabbati tasvirlangan tarixiy asar.",
@@ -29,8 +36,12 @@ CURATED_RECOMMENDATIONS = [
         "cover_url": "https://covers.openlibrary.org/b/id/10523425-L.jpg",
         "access_type": "free",
         "reading_url": "https://ziyouz.com",
+        "audio_url": "https://ziyouz.com",
+        "audio_duration": "5 soat 40 daqiqa",
+        "pages": 320,
     },
     {
+        "code": 3,
         "title": "Yulduzli tunlar",
         "authors": ["Pirimqul Qodirov"],
         "description": "Zahiriddin Muhammad Boburning murakkab hayot yo'li, Temuriylar saltanati inqirozi va Hindistonda Boburiylar sulolasining asos solinishi haqidagi yuksak mahorat bilan yozilgan tarixiy roman.",
@@ -41,8 +52,11 @@ CURATED_RECOMMENDATIONS = [
         "cover_url": "https://covers.openlibrary.org/b/id/11153214-L.jpg",
         "access_type": "free",
         "reading_url": "https://ziyouz.com",
+        "video_url": "https://youtube.com",
+        "pages": 496,
     },
     {
+        "code": 4,
         "title": "Ikki eshik orasi",
         "authors": ["O'tkir Hoshimov"],
         "description": "Ikkinchi jahon urushi yillari va undan keyingi davrda o'zbek xalqining boshidan kechirgan og'ir sinovlari, insoniy qadr-qimmat va mehr-oqibat haqidagi mashhur asar.",
@@ -53,8 +67,10 @@ CURATED_RECOMMENDATIONS = [
         "cover_url": "https://covers.openlibrary.org/b/id/10313520-L.jpg",
         "access_type": "free",
         "reading_url": "https://ziyouz.com",
+        "pages": 540,
     },
     {
+        "code": 5,
         "title": "1984",
         "authors": ["George Orwell"],
         "description": "Totalitar tuzum, doimiy kuzatuv, erkin fikrning bo'g'ilishi va insoniy tuyg'ularning fojiasi haqida ogohlantiruvchi mashhur distopik asar.",
@@ -65,8 +81,11 @@ CURATED_RECOMMENDATIONS = [
         "cover_url": "https://covers.openlibrary.org/b/id/15006606-L.jpg",
         "access_type": "free",
         "reading_url": "https://www.gutenberg.org",
+        "audio_url": "https://librivox.org",
+        "pages": 328,
     },
     {
+        "code": 6,
         "title": "To Kill a Mockingbird",
         "authors": ["Harper Lee"],
         "description": "A gripping, heart-wrenching, and wholly remarkable tale of coming-of-age in a South poisoned by virulent prejudice, viewing a world of great beauty and savage inequities through the eyes of a young girl.",
@@ -76,8 +95,10 @@ CURATED_RECOMMENDATIONS = [
         "source_book_id": "curated_mockingbird",
         "cover_url": "https://covers.openlibrary.org/b/id/8225266-L.jpg",
         "access_type": "preview",
+        "pages": 281,
     },
     {
+        "code": 7,
         "title": "The Great Gatsby",
         "authors": ["F. Scott Fitzgerald"],
         "description": "The tragic story of Jay Gatsby, a self-made millionaire, and his pursuit of Daisy Buchanan, a wealthy young woman whom he loved in his youth.",
@@ -88,8 +109,10 @@ CURATED_RECOMMENDATIONS = [
         "cover_url": "https://covers.openlibrary.org/b/id/10777555-L.jpg",
         "access_type": "free",
         "reading_url": "https://www.gutenberg.org",
+        "pages": 180,
     },
     {
+        "code": 8,
         "title": "Война и мир",
         "authors": ["Лев Толстой"],
         "description": "Грандиозный роман-эпопея, описывающий русское общество в эпоху войн против Наполеона в 1805—1812 годах, глубочайшие философские размышления о судьбе, свободе и человеческой душе.",
@@ -100,8 +123,10 @@ CURATED_RECOMMENDATIONS = [
         "cover_url": "https://covers.openlibrary.org/b/id/12850787-L.jpg",
         "access_type": "free",
         "reading_url": "https://ilibrary.ru",
+        "pages": 1225,
     },
     {
+        "code": 9,
         "title": "Мастер и Маргарита",
         "authors": ["Михаил Булгаков"],
         "description": "Бессмертный роман о визите Воланда в Москву 1930-х годов, вечной любви Мастера и Маргариты и библейской истории Понтия Пилата и Иешуа Га-Ноцри.",
@@ -112,8 +137,10 @@ CURATED_RECOMMENDATIONS = [
         "cover_url": "https://covers.openlibrary.org/b/id/10515124-L.jpg",
         "access_type": "free",
         "reading_url": "https://ilibrary.ru",
+        "pages": 380,
     },
     {
+        "code": 10,
         "title": "Преступление и наказание",
         "authors": ["Фёдор Достоевский"],
         "description": "Глубочайший социально-философский и психологический роман о студенте Родионе Раскольникове, совершившем преступление и прошедшем через душевные муки и раскаяние.",
@@ -124,6 +151,7 @@ CURATED_RECOMMENDATIONS = [
         "cover_url": "https://covers.openlibrary.org/b/id/12693247-L.jpg",
         "access_type": "free",
         "reading_url": "https://ilibrary.ru",
+        "pages": 672,
     },
 ]
 
