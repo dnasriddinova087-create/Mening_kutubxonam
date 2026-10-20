@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}{% if book %}Kitobni tahrirlash{% else %}Yangi kitob qo'shish{% endif %} — KITOBXON AI Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{% if book %}Kitobni tahrirlash{% else %}Yangi mahalliy kitob qo'shish{% endif %}</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Kitob ma'lumotlari, muqovasi va o'qish havolasini kiriting</p>
+  </div>
+  <div>
+    <a href="/admin/books" class="btn btn-sm" style="background: #21262d; color: var(--text-main);">← Ro'yxatga qaytish</a>
+  </div>
+</div>
+
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+  <form method="POST" action="{% if book %}/admin/books/{{ book.id }}/edit{% else %}/admin/books/new{% endif %}">
+    <div class="form-group">
+      <label for="title">Kitob nomi *</label>
+      <input type="text" id="title" name="title" value="{{ book.original_title if book else '' }}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="authors">Mualliflar (vergul bilan ajrating) *</label>
+      <input type="text" id="authors" name="authors" value="{{ (book.authors | join(', ')) if book and book.authors else '' }}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Kitob tavsifi</label>
+      <textarea id="description" name="description" rows="5">{{ book.description if book else '' }}</textarea>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div class="form-group">
+        <label for="publisher">Nashriyot</label>
+        <input type="text" id="publisher" name="publisher" value="{{ book.publisher if book and book.publisher else '' }}">
+      </div>
+      <div class="form-group">
+        <label for="published_date">Nashr yili / sanasi</label>
+        <input type="text" id="published_date" name="published_date" value="{{ book.published_date if book and book.published_date else '' }}">
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div class="form-group">
+        <label for="isbn">ISBN</label>
+        <input type="text" id="isbn" name="isbn" value="{{ book.isbn if book and book.isbn else '' }}">
+      </div>
+      <div class="form-group">
+        <label for="access_type">Kirish / O'qish turi</label>
+        <select id="access_type" name="access_type">
+          <option value="free" {% if book and book.access_type == 'free' %}selected{% endif %}>Bepul to'liq o'qish (Free)</option>
+          <option value="preview" {% if book and book.access_type == 'preview' %}selected{% endif %}>Qisman ko'rish (Preview)</option>
+          <option value="borrow" {% if book and book.access_type == 'borrow' %}selected{% endif %}>Kutubxonadan olish (Borrow)</option>
+          <option value="buy" {% if book and book.access_type == 'buy' %}selected{% endif %}>Rasmiy xarid (Buy)</option>
+          <option value="info" {% if book and book.access_type == 'info' %}selected{% endif %}>Faqat ma'lumot (Info)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="cover_url">Muqova rasm URL (HTTPS)</label>
+      <input type="url" id="cover_url" name="cover_url" value="{{ book.cover_url if book and book.cover_url else '' }}">
+    </div>
+
+    <div class="form-group">
+      <label for="reading_url">Qonuniy elektron o'qish havolasi URL (HTTPS)</label>
+      <input type="url" id="reading_url" name="reading_url" value="{{ book.reading_url if book and book.reading_url else '' }}">
+    </div>
+
+    <button type="submit" class="btn btn-success" style="width: 100%; justify-content: center; margin-top: 1rem;">
+      {% if book %}O'zgarishlarni saqlash{% else %}Kitobni saqlash{% endif %}
+    </button>
+  </form>
+</div>
+{% endblock %}

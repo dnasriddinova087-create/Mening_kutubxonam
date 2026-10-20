@@ -1,0 +1,113 @@
+{
+  "app_name": "KITOBXON AI",
+  "welcome": "Assalomu alaykum, {name}! 📚\n\n<b>KITOBXON AI</b> — professional kitob qidiruv va kashfiyot platformasiga xush kelibsiz.\n\nMen sizga dunyo bo'ylab istalgan kitobni topishga, mualliflar, tavsiflar, tahlillar va qonuniy o'qish manbalarini ko'rsatishga yordam beraman.\n\nQidirish uchun shunchaki kitob nomi, muallif yoki ISBN raqamini yozib yuboring!",
+  "help_text": "📖 <b>KITOBXON AI — Yordam yo'riqnomasi</b>\n\n<b>Qidiruv imkoniyatlari:</b>\n• Kitobning to'liq yoki qisqa nomi (masalan: <i>O'tkan kunlar</i>)\n• Muallif ismi (masalan: <i>Abdulla Qodiriy</i>)\n• ISBN raqami (masalan: <i>9780140449136</i>)\n• Lotin yoki kirill yozuvida qidirish mumkin\n\n<b>Buyruqlar:</b>\n/start — Asosiy menyuni ochish\n/search — Yangi kitob qidirish\n/favorites — Sevimli kitoblaringiz\n/profile — Shaxsiy profilingiz va statistika\n/recommend — Kitob tavsiyalari\n/language — Tilni o'zgartirish\n/help — Ushbu yordam xabari\n/cancel — Joriy amalni bekor qilish",
+  "menu": {
+    "search": "🔎 Kitob qidirish",
+    "recommend": "✨ Kitob tavsiya qilish",
+    "favorites": "🔖 Sevimli kitoblarim",
+    "reading_list": "📚 O‘qish ro‘yxatim",
+    "stats": "📊 Statistikam",
+    "language": "🌐 Til",
+    "help": "ℹ️ Yordam"
+  },
+  "search": {
+    "prompt": "🔍 Qidirmoqchi bo'lgan kitob nomi, muallif ismi yoki ISBN raqamini kiriting:",
+    "searching": "⏳ Kitoblar qidirilmoqda...",
+    "results_header": "🔍 <b>'{query}'</b> bo'yicha topilgan kitoblar (Sahifa {page}/{total_pages}):",
+    "no_results": "😔 Afsuski, <b>'{query}'</b> bo'yicha hech qanday kitob topilmadi.\n\n💡 <b>Tavsiya:</b>\n• So'zlarni to'g'ri yozilganini tekshiring\n• Muallif ismini kiritib ko'ring\n• Lotin yoki kirill yozuvida sinab ko'ring\n• Qisqaroq so'z bilan qidirib ko'ring",
+    "cancelled": "❌ Qidiruv bekor qilindi.",
+    "page_info": "Sahifa {page} / {total_pages}",
+    "prev_btn": "⬅️ Oldingi",
+    "next_btn": "Keyingi ➡️"
+  },
+  "book": {
+    "title": "📚 <b>{title}</b>",
+    "authors": "✍️ <b>Muallif:</b> {authors}",
+    "year": "📅 <b>Yil:</b> {year}",
+    "publisher": "🏢 <b>Nashriyot:</b> {publisher}",
+    "genres": "🏷️ <b>Janrlar:</b> {genres}",
+    "isbn": "🔢 <b>ISBN:</b> {isbn}",
+    "language": "🌐 <b>Tili:</b> {language}",
+    "source": "🏛️ <b>Manba:</b> {source}",
+    "about_header": "📖 <b>KITOB HAQIDA</b>",
+    "main_idea_header": "💡 <b>ASOSIY G‘OYA</b>",
+    "for_who_header": "🎯 <b>KIMLAR UCHUN?</b>",
+    "lessons_header": "🌱 <b>ASOSIY SABOQLAR</b>",
+    "reading_sources_header": "🔗 <b>QONUNIY O‘QISH MANBALARI</b>",
+    "no_description": "Tavsif mavjud emas.",
+    "no_authors": "Noma'lum muallif",
+    "not_specified": "Ko'rsatilmagan",
+    "access_free": "🟢 Bepul to'liq o'qish (Ochiq manba)",
+    "access_preview": "🟡 Qisman ko'rish (Preview)",
+    "access_borrow": "🔵 Kutubxonadan qarzga olish",
+    "access_buy": "🛒 Rasmiy sotib olish",
+    "access_info": "ℹ️ Bibliografik sahifa",
+    "btn_details": "📚 Batafsil",
+    "btn_ai_analysis": "🧠 AI tahlili",
+    "btn_add_favorite": "🔖 Saqlash",
+    "btn_remove_favorite": "❌ Saqlanganlardan o‘chirish",
+    "btn_reading_list": "📚 O‘qish ro‘yxatiga",
+    "btn_legal_sources": "📖 Qonuniy manbalar",
+    "btn_similar": "🔍 O‘xshash kitoblar",
+    "btn_back": "↩️ Orqaga"
+  },
+  "ai": {
+    "loading": "🧠 AI tahlili tayyorlanmoqda, iltimos kuting...",
+    "disclaimer": "⚠️ <i>Ushbu tahlil kitob metama'lumotlari asosida tuzilgan.</i>",
+    "unavailable": "⚠️ AI tahlil xizmati hozirda mavjud emas yoki sozlanmagan. Kitobning standart tavsifi bilan tanishishingiz mumkin.",
+    "summary_title": "📌 <b>Qisqacha mazmun:</b>",
+    "key_ideas_title": "💡 <b>Asosiy g'oyalar:</b>",
+    "lessons_title": "🌱 <b>Foydali xulosalar:</b>",
+    "audience_title": "🎯 <b>Kimlarga tavsiya etiladi:</b>"
+  },
+  "favorites": {
+    "title": "🔖 <b>Sevimli kitoblaringiz</b>",
+    "empty": "Sizda hali sevimli kitoblar yo'q. Qidiruv natijalaridagi kitob kartochkasida '🔖 Saqlash' tugmasini bosing.",
+    "added": "✅ Kitob sevimlilarga qo'shildi!",
+    "removed": "🗑️ Kitob sevimlilardan o'chirildi."
+  },
+  "reading_list": {
+    "title": "📚 <b>Sizning o'qish ro'yxatingiz</b>",
+    "empty": "O'qish ro'yxatingiz bo'sh.",
+    "want_to_read": "⏳ O'qimoqchiman",
+    "reading": "📖 O'qiyapman",
+    "finished": "✅ O'qib bo'ldim",
+    "status_updated": "✅ Kitob holati yangilandi: {status}",
+    "select_status": "Kitob holatini tanlang:"
+  },
+  "profile": {
+    "title": "👤 <b>Foydalanuvchi profili</b>",
+    "id": "🆔 Telegram ID: <code>{id}</code>",
+    "name": "👤 Ism: {name}",
+    "language": "🌐 Til: {language}",
+    "favorites_count": "🔖 Sevimli kitoblar: {count}",
+    "reading_count": "📖 Hozir o'qilmoqda: {count}",
+    "finished_count": "✅ O'qib bo'lingan: {count}",
+    "searches_count": "🔍 Jami qidiruvlar: {count}",
+    "goal": "🎯 Oylik o'qish maqsadi: {goal} ta kitob",
+    "btn_set_goal": "🎯 Maqsad belgilash",
+    "btn_notes": "📝 Qaydlarim",
+    "btn_export": "📥 Ma'lumotlarni eksport qilish",
+    "btn_delete_account": "🗑️ Profilni o'chirish",
+    "delete_confirm": "⚠️ Haqiqatan ham barcha shaxsiy ma'lumotlaringizni (sevimlilar, o'qish ro'yxati, qidiruv tarixi) o'chirmoqchimisiz?",
+    "deleted_success": "✅ Barcha shaxsiy ma'lumotlaringiz muvaffaqiyatli o'chirildi.",
+    "export_caption": "📄 Sizning KITOBXON AI platformasidagi ma'lumotlaringiz."
+  },
+  "recommendations": {
+    "title": "✨ <b>Siz uchun maxsus tavsiyalar</b>",
+    "subtitle": "Kutubxonamiz va sizning qiziqishlaringiz asosida saralangan durdonalar:",
+    "empty": "Hozircha yetarli tavsiyalar mavjud emas. Ko'proq kitoblarni qidiring yoki sevimlilarga qo'shing!"
+  },
+  "language": {
+    "choose": "🌐 Iltimos, tilni tanlang / Пожалуйста, выберите язык / Please select your language:",
+    "changed": "✅ Til muvaffaqiyatli o'zgartirildi: <b>O'zbek tili</b> 🇺🇿"
+  },
+  "errors": {
+    "general": "⚠️ Kutilmagan xatolik yuz berdi. Iltimos, birozdan so'ng qayta urinib ko'ring.",
+    "rate_limit": "⏳ Iltimos, shoshilmang! So'rovlar oralig'ida biroz kuting.",
+    "timeout": "⌛ Qidiruv xizmati javob berishda kechikmoqda. Iltimos, qayta urinib ko'ring.",
+    "stale_callback": "⚠️ Ushbu tugma eskirgan. Iltimos, yangi so'rov yuboring.",
+    "book_not_found": "Kitob topilmadi yoki bazadan o'chirilgan."
+  }
+}

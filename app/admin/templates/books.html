@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Kitoblar — KITOBXON AI Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Kitoblar katalogi</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Bazada saqlangan barcha mahalliy va kesh qilingan kitoblar</p>
+  </div>
+  <div>
+    <a href="/admin/books/new" class="btn btn-primary">+ Yangi kitob qo'shish</a>
+  </div>
+</div>
+
+<div class="card" style="padding: 1rem; margin-bottom: 1.5rem;">
+  <form method="GET" action="/admin/books" style="display: flex; gap: 1rem;">
+    <input type="text" name="q" placeholder="Nom, muallif yoki ISBN bo'yicha qidirish..." value="{{ search_query or '' }}">
+    <button type="submit" class="btn btn-primary">Qidirish</button>
+  </form>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Muqova</th>
+          <th>Nomi</th>
+          <th>Muallif</th>
+          <th>Manba</th>
+          <th>Kirish turi</th>
+          <th>Holat</th>
+          <th>Amallar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for book in books %}
+        <tr>
+          <td>{{ book.id }}</td>
+          <td>
+            {% if book.cover_url %}
+            <img src="{{ book.cover_url }}" alt="Cover" style="width: 36px; height: 50px; object-fit: cover; border-radius: 4px;">
+            {% else %}
+            <div style="width: 36px; height: 50px; background: #21262d; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--text-muted);">Muqovasiz</div>
+            {% endif %}
+          </td>
+          <td><b>{{ book.original_title }}</b></td>
+          <td>{{ (book.authors or []) | join(', ') }}</td>
+          <td><span class="badge" style="background: rgba(255,255,255,0.1);">{{ book.source }}</span></td>
+          <td>
+            <span class="badge badge-{{ book.access_type }}">{{ book.access_type }}</span>
+          </td>
+          <td>
+            {% if book.is_archived %}
+            <span class="badge badge-archived">Arxivlangan</span>
+            {% else %}
+            <span class="badge badge-free">Faol</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="display: flex; gap: 0.5rem;">
+              <a href="/admin/books/{{ book.id }}/edit" class="btn btn-primary btn-sm">Tahrirlash</a>
+              <form method="POST" action="/admin/books/{{ book.id }}/toggle-archive">
+                <button type="submit" class="btn btn-danger btn-sm">
+                  {% if book.is_archived %}Tiklash{% else %}Arxivlash{% endif %}
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="8" style="text-align: center; color: var(--text-muted);">Kitoblar topilmadi.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

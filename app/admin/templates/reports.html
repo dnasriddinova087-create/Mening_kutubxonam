@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Murojaatlar — KITOBXON AI Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Foydalanuvchilar murojaatlari va shikoyatlar</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Noto'g'ri kitob ma'lumotlari yoki takliflar</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Sana</th>
+          <th>User ID</th>
+          <th>Kitob ID</th>
+          <th>Turi</th>
+          <th>Xabar</th>
+          <th>Holat</th>
+          <th>Amal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for report in reports %}
+        <tr>
+          <td>{{ report.id }}</td>
+          <td>{{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td><code>{{ report.user_id }}</code></td>
+          <td>{{ report.book_id or '-' }}</td>
+          <td><span class="badge" style="background: rgba(255,255,255,0.1);">{{ report.report_type }}</span></td>
+          <td>{{ report.message }}</td>
+          <td>
+            {% if report.status == 'pending' %}
+            <span class="badge badge-preview">Kutilmoqda</span>
+            {% else %}
+            <span class="badge badge-free">Hal qilingan</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if report.status == 'pending' %}
+            <form method="POST" action="/admin/reports/{{ report.id }}/resolve">
+              <button type="submit" class="btn btn-success btn-sm">Hal qilindi deb belgilash</button>
+            </form>
+            {% else %}
+            -
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="8" style="text-align: center; color: var(--text-muted);">Murojaatlar mavjud emas.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

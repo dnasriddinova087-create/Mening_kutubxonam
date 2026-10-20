@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}KITOBXON AI — Admin{% endblock %}</title>
+  <link rel="stylesheet" href="/admin/static/css/admin.css">
+</head>
+<body>
+  {% if admin %}
+  <header class="navbar">
+    <div class="brand">
+      <span>📚 KITOBXON AI</span>
+      <span class="badge">ADMIN</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="/admin/dashboard" class="{% if active_tab == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+      <li><a href="/admin/books" class="{% if active_tab == 'books' %}active{% endif %}">Kitoblar katalogi</a></li>
+      <li><a href="/admin/users" class="{% if active_tab == 'users' %}active{% endif %}">Foydalanuvchilar</a></li>
+      <li><a href="/admin/reports" class="{% if active_tab == 'reports' %}active{% endif %}">Murojaatlar</a></li>
+    </ul>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <div class="user-badge">
+        👤 {{ admin.username }}
+      </div>
+      <a href="/admin/logout" class="btn btn-danger btn-sm">Chiqish</a>
+    </div>
+  </header>
+  {% endif %}
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,113 @@
+{
+  "app_name": "KITOBXON AI",
+  "welcome": "Hello, {name}! 📚\n\nWelcome to <b>KITOBXON AI</b> — professional book discovery and exploration platform.\n\nI can help you search books worldwide, view authors, descriptions, analyses, and legal reading resources.\n\nTo search, simply send a book title, author name, or ISBN number!",
+  "help_text": "📖 <b>KITOBXON AI — Help Guide</b>\n\n<b>Search options:</b>\n• Full or partial book title (e.g., <i>To Kill a Mockingbird</i>)\n• Author name (e.g., <i>Harper Lee</i>)\n• ISBN number (e.g., <i>9780061120084</i>)\n• Latin or Cyrillic script supported\n\n<b>Commands:</b>\n/start — Open main menu\n/search — Search for books\n/favorites — Your saved books\n/profile — Your profile and reading statistics\n/recommend — Book recommendations\n/language — Switch language\n/help — This help guide\n/cancel — Cancel current action",
+  "menu": {
+    "search": "🔎 Search Books",
+    "recommend": "✨ Recommendations",
+    "favorites": "🔖 My Favorites",
+    "reading_list": "📚 Reading List",
+    "stats": "📊 My Statistics",
+    "language": "🌐 Language",
+    "help": "ℹ️ Help"
+  },
+  "search": {
+    "prompt": "🔍 Enter book title, author name, or ISBN:",
+    "searching": "⏳ Searching books...",
+    "results_header": "🔍 Books found for <b>'{query}'</b> (Page {page}/{total_pages}):",
+    "no_results": "😔 Sorry, no books were found for <b>'{query}'</b>.\n\n💡 <b>Tips:</b>\n• Check for typos and spelling\n• Try specifying the author name\n• Try Latin or Cyrillic characters\n• Use shorter keywords",
+    "cancelled": "❌ Search cancelled.",
+    "page_info": "Page {page} / {total_pages}",
+    "prev_btn": "⬅️ Previous",
+    "next_btn": "Next ➡️"
+  },
+  "book": {
+    "title": "📚 <b>{title}</b>",
+    "authors": "✍️ <b>Author:</b> {authors}",
+    "year": "📅 <b>Year:</b> {year}",
+    "publisher": "🏢 <b>Publisher:</b> {publisher}",
+    "genres": "🏷️ <b>Genres:</b> {genres}",
+    "isbn": "🔢 <b>ISBN:</b> {isbn}",
+    "language": "🌐 <b>Language:</b> {language}",
+    "source": "🏛️ <b>Source:</b> {source}",
+    "about_header": "📖 <b>ABOUT THE BOOK</b>",
+    "main_idea_header": "💡 <b>CORE IDEA</b>",
+    "for_who_header": "🎯 <b>WHO IS IT FOR?</b>",
+    "lessons_header": "🌱 <b>KEY LESSONS</b>",
+    "reading_sources_header": "🔗 <b>LEGAL READING SOURCES</b>",
+    "no_description": "No description available.",
+    "no_authors": "Unknown author",
+    "not_specified": "Not specified",
+    "access_free": "🟢 Free Full Reading (Open Access)",
+    "access_preview": "🟡 Preview Available",
+    "access_borrow": "🔵 Borrow via Library (Open Library)",
+    "access_buy": "🛒 Official Purchase",
+    "access_info": "ℹ️ Bibliographic Record",
+    "btn_details": "📚 Details",
+    "btn_ai_analysis": "🧠 AI Analysis",
+    "btn_add_favorite": "🔖 Favorite",
+    "btn_remove_favorite": "❌ Remove Favorite",
+    "btn_reading_list": "📚 Add to Reading List",
+    "btn_legal_sources": "📖 Legal Sources",
+    "btn_similar": "🔍 Similar Books",
+    "btn_back": "↩️ Back"
+  },
+  "ai": {
+    "loading": "🧠 AI is analyzing the book, please wait...",
+    "disclaimer": "⚠️ <i>This analysis is generated based on book metadata.</i>",
+    "unavailable": "⚠️ AI analysis service is temporarily unavailable or not configured. You can still read the standard description.",
+    "summary_title": "📌 <b>Summary:</b>",
+    "key_ideas_title": "💡 <b>Key Ideas:</b>",
+    "lessons_title": "🌱 <b>Key Takeaways:</b>",
+    "audience_title": "🎯 <b>Target Audience:</b>"
+  },
+  "favorites": {
+    "title": "🔖 <b>Your Favorite Books</b>",
+    "empty": "You have no favorite books yet. Click '🔖 Favorite' on any book card to add one.",
+    "added": "✅ Book added to favorites!",
+    "removed": "🗑️ Book removed from favorites."
+  },
+  "reading_list": {
+    "title": "📚 <b>Your Reading List</b>",
+    "empty": "Your reading list is empty.",
+    "want_to_read": "⏳ Want to Read",
+    "reading": "📖 Currently Reading",
+    "finished": "✅ Finished",
+    "status_updated": "✅ Book status updated: {status}",
+    "select_status": "Select reading status:"
+  },
+  "profile": {
+    "title": "👤 <b>Reader Profile</b>",
+    "id": "🆔 Telegram ID: <code>{id}</code>",
+    "name": "👤 Name: {name}",
+    "language": "🌐 Language: {language}",
+    "favorites_count": "🔖 Favorite books: {count}",
+    "reading_count": "📖 Currently reading: {count}",
+    "finished_count": "✅ Finished books: {count}",
+    "searches_count": "🔍 Total searches: {count}",
+    "goal": "🎯 Monthly reading goal: {goal} books",
+    "btn_set_goal": "🎯 Set Goal",
+    "btn_notes": "📝 My Notes",
+    "btn_export": "📥 Export Data",
+    "btn_delete_account": "🗑️ Delete Account",
+    "delete_confirm": "⚠️ Are you sure you want to delete all your personal data (favorites, reading list, search history)?",
+    "deleted_success": "✅ All your personal data has been permanently deleted.",
+    "export_caption": "📄 Your personal data from KITOBXON AI platform."
+  },
+  "recommendations": {
+    "title": "✨ <b>Curated Recommendations</b>",
+    "subtitle": "Selected masterworks based on our catalog and reading patterns:",
+    "empty": "Not enough data for recommendations yet. Search and favorite books to get personalized picks!"
+  },
+  "language": {
+    "choose": "🌐 Iltimos, tilni tanlang / Пожалуйста, выберите язык / Please select your language:",
+    "changed": "✅ Language successfully changed to: <b>English</b> 🇬🇧"
+  },
+  "errors": {
+    "general": "⚠️ An unexpected error occurred. Please try again shortly.",
+    "rate_limit": "⏳ Please slow down! Wait a moment between requests.",
+    "timeout": "⌛ The search service took too long to respond. Please try again.",
+    "stale_callback": "⚠️ This button has expired. Please send a new search query.",
+    "book_not_found": "Book not found or has been removed from database."
+  }
+}

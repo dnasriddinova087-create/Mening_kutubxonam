@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — KITOBXON AI Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Umumiy ko'rsatkichlar</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Platforma faoliyati va real vaqtdagi statistika</p>
+  </div>
+  <div>
+    <a href="/admin/books/new" class="btn btn-primary">+ Yangi kitob qo'shish</a>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Jami foydalanuvchilar</div>
+    <div class="stat-value">{{ stats.total_users }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Bugun faol</div>
+    <div class="stat-value" style="color: #3fb950;">{{ stats.active_today }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Oylik faol</div>
+    <div class="stat-value">{{ stats.active_month }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Katalogdagi kitoblar</div>
+    <div class="stat-value">{{ stats.total_books }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Jami qidiruvlar</div>
+    <div class="stat-value">{{ stats.total_searches }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Kutilayotgan shikoyatlar</div>
+    <div class="stat-value" style="color: {% if stats.pending_reports > 0 %}#f85149{% else %}var(--text-main){% endif %};">
+      {{ stats.pending_reports }}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Eng ko'p qidirilgan so'rovlar</h2>
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Qidiruv so'zi</th>
+          <th>Qidiruvlar soni</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for query, count in top_queries %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td><b>{{ query }}</b></td>
+          <td>{{ count }} marta</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="3" style="text-align: center; color: var(--text-muted);">Qidiruvlar tarixi mavjud emas</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

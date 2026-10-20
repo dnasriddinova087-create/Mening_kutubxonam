@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Kirish — KITOBXON AI Admin{% endblock %}
+
+{% block content %}
+<div class="login-box">
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem;">📚 KITOBXON AI</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Administrator paneliga kirish</p>
+  </div>
+
+  {% if error %}
+  <div style="background: rgba(218, 54, 51, 0.15); border: 1px solid var(--danger); color: #f85149; padding: 0.75rem; border-radius: 6px; margin-bottom: 1.5rem; font-size: 0.9rem;">
+    {{ error }}
+  </div>
+  {% endif %}
+
+  <form method="POST" action="/admin/login">
+    <div class="form-group">
+      <label for="username">Foydalanuvchi nomi</label>
+      <input type="text" id="username" name="username" required autofocus>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Parol</label>
+      <input type="password" id="password" name="password" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+      Tizimga kirish
+    </button>
+  </form>
+</div>
+{% endblock %}

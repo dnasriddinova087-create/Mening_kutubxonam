@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Foydalanuvchilar — KITOBXON AI Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Foydalanuvchilar</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Telegram bot foydalanuvchilari ro'yxati va holati</p>
+  </div>
+</div>
+
+<div class="card" style="padding: 1rem; margin-bottom: 1.5rem;">
+  <form method="GET" action="/admin/users" style="display: flex; gap: 1rem;">
+    <input type="text" name="q" placeholder="Foydalanuvchi nomi yoki to'liq ismi bo'yicha qidirish..." value="{{ search_query or '' }}">
+    <button type="submit" class="btn btn-primary">Qidirish</button>
+  </form>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>Telegram ID</th>
+          <th>Ism</th>
+          <th>Username</th>
+          <th>Til</th>
+          <th>O'qish maqsadi</th>
+          <th>Oxirgi faollik</th>
+          <th>Holat</th>
+          <th>Amal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td><code>{{ user.telegram_id }}</code></td>
+          <td><b>{{ user.full_name or 'Noma\'lum' }}</b></td>
+          <td>{% if user.username %}@{{ user.username }}{% else %}-{% endif %}</td>
+          <td><span class="badge" style="background: rgba(255,255,255,0.1);">{{ user.language }}</span></td>
+          <td>{{ user.reading_goal }} ta kitob</td>
+          <td>{{ user.last_active_at.strftime('%Y-%m-%d %H:%M') if user.last_active_at else '-' }}</td>
+          <td>
+            {% if user.is_blocked %}
+            <span class="badge badge-archived">Bloklangan</span>
+            {% else %}
+            <span class="badge badge-free">Faol</span>
+            {% endif %}
+          </td>
+          <td>
+            <form method="POST" action="/admin/users/{{ user.telegram_id }}/toggle-block">
+              <button type="submit" class="btn btn-sm {% if user.is_blocked %}btn-success{% else %}btn-danger{% endif %}">
+                {% if user.is_blocked %}Blokdan chiqarish{% else %}Bloklash{% endif %}
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="8" style="text-align: center; color: var(--text-muted);">Foydalanuvchilar topilmadi.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
