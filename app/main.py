@@ -8,6 +8,7 @@ from aiogram.types import BotCommand, BotCommandScopeDefault
 
 from app.bot.handlers import (
     book_detail,
+    catalog,
     errors,
     favorites,
     language,
@@ -29,6 +30,7 @@ async def register_bot_commands(bot: Bot) -> None:
     """Register commands for BotFather in uz, ru, and en."""
     commands_uz = [
         BotCommand(command="start", description="Bosh menyuni ochish"),
+        BotCommand(command="catalog", description="Barcha kitoblar katalogi"),
         BotCommand(command="search", description="Kitob qidirish"),
         BotCommand(command="favorites", description="Sevimli kitoblarim"),
         BotCommand(command="profile", description="Profil va statistika"),
@@ -40,6 +42,7 @@ async def register_bot_commands(bot: Bot) -> None:
 
     commands_ru = [
         BotCommand(command="start", description="Главное меню"),
+        BotCommand(command="catalog", description="Каталог всех книг"),
         BotCommand(command="search", description="Поиск книг"),
         BotCommand(command="favorites", description="Мои избранные"),
         BotCommand(command="profile", description="Профиль и статистика"),
@@ -51,6 +54,7 @@ async def register_bot_commands(bot: Bot) -> None:
 
     commands_en = [
         BotCommand(command="start", description="Open main menu"),
+        BotCommand(command="catalog", description="All books catalog"),
         BotCommand(command="search", description="Search books"),
         BotCommand(command="favorites", description="My favorite books"),
         BotCommand(command="profile", description="Profile & statistics"),
@@ -112,6 +116,7 @@ async def main() -> None:
 
     # Include Handlers - Specific command & button routers first, search text catch-all last
     dp.include_router(start.router)
+    dp.include_router(catalog.router)
     dp.include_router(language.router)
     dp.include_router(favorites.router)
     dp.include_router(reading_list.router)

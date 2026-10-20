@@ -120,13 +120,28 @@ class BookRepository:
         return list(items), total
 
     async def list_books(
-        self, offset: int = 0, limit: int = 50, include_archived: bool = False
+        self,
+        offset: int = 0,
+        limit: int = 50,
+        include_archived: bool = False,
+        language: str | None = None,
+        genre: str | None = None,
     ) -> tuple[list[Book], int]:
+        from sqlalchemy import String, cast
+
         stmt = select(Book)
         count_stmt = select(func.count(Book.id))
+        filters = []
         if not include_archived:
-            stmt = stmt.where(Book.is_archived.is_(False))
-            count_stmt = count_stmt.where(Book.is_archived.is_(False))
+            filters.append(Book.is_archived.is_(False))
+        if language and language.lower() not in ("all", "*"):
+            filters.append(func.lower(Book.language) == language.lower())
+        if genre and genre.lower() not in ("all", "*"):
+            filters.append(cast(Book.genres, String).ilike(f"%{genre}%"))
+
+        if filters:
+            stmt = stmt.where(*filters)
+            count_stmt = count_stmt.where(*filters)
 
         total = (await self.session.execute(count_stmt)).scalar() or 0
         stmt = stmt.order_by(Book.id.desc()).offset(offset).limit(limit)

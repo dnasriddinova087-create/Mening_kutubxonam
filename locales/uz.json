@@ -4,6 +4,7 @@
   "help_text": "📖 <b>KITOBXON AI — Yordam yo'riqnomasi</b>\n\n<b>Qidiruv imkoniyatlari:</b>\n• Kitobning to'liq yoki qisqa nomi (masalan: <i>O'tkan kunlar</i>)\n• Muallif ismi (masalan: <i>Abdulla Qodiriy</i>)\n• ISBN raqami (masalan: <i>9780140449136</i>)\n• Lotin yoki kirill yozuvida qidirish mumkin\n\n<b>Buyruqlar:</b>\n/start — Asosiy menyuni ochish\n/search — Yangi kitob qidirish\n/favorites — Sevimli kitoblaringiz\n/profile — Shaxsiy profilingiz va statistika\n/recommend — Kitob tavsiyalari\n/language — Tilni o'zgartirish\n/help — Ushbu yordam xabari\n/cancel — Joriy amalni bekor qilish",
   "menu": {
     "search": "🔎 Kitob qidirish",
+    "catalog": "📚 Barcha kitoblar katalogi",
     "recommend": "✨ Kitob tavsiya qilish",
     "favorites": "🔖 Sevimli kitoblarim",
     "reading_list": "📚 O‘qish ro‘yxatim",
@@ -111,6 +112,20 @@
     "lang_ru": "🇷🇺 Русский",
     "lang_en": "🇬🇧 English",
     "lang_all": "🌍 Barcha tillar (All)"
+  },
+  "catalog": {
+    "title": "📚 <b>Barcha kitoblar katalogi</b>",
+    "page_header": "📚 <b>Kitoblar katalogi</b> (Sahifa {page}/{total_pages})\n📊 Jami kitoblar: <b>{total_books}</b> ta\n{filter_desc}\n\nQuyidagi tugmalar orqali sahifalarni varaqlashingiz yoki filtrlarni tanlashingiz mumkin:",
+    "empty": "😔 Hozircha tanlangan filtr bo'yicha katalogda kitoblar mavjud emas.",
+    "open_book": "📖 Kitobni ochish",
+    "prev_btn": "⬅️ Oldingi",
+    "next_btn": "Keyingi ➡️",
+    "filter_all": "Barchasi",
+    "filter_uz": "🇺🇿 O'zbekcha",
+    "filter_ru": "🇷🇺 Ruscha",
+    "filter_en": "🇬🇧 Inglizcha",
+    "reset_filters": "🔄 Tozalash",
+    "no_cover": "Muqova mavjud emas"
   },
   "errors": {
     "general": "⚠️ Kutilmagan xatolik yuz berdi. Iltimos, birozdan so'ng qayta urinib ko'ring.",

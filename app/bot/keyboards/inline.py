@@ -184,3 +184,89 @@ def get_delete_confirm_keyboard(lang: str = "uz") -> InlineKeyboardMarkup:
         ],
     ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)
+
+
+def get_catalog_control_keyboard(
+    page: int,
+    total_pages: int,
+    current_lang: str = "all",
+    current_genre: str = "all",
+    lang: str = "uz",
+) -> InlineKeyboardMarkup:
+    """Control and pagination keyboard for full books catalog."""
+    buttons: list[list[InlineKeyboardButton]] = []
+
+    # Row 1: Pagination navigation
+    nav_row: list[InlineKeyboardButton] = []
+    if page > 1:
+        nav_row.append(
+            InlineKeyboardButton(
+                text=t(lang, "catalog.prev_btn"),
+                callback_data=f"cat:page:{page - 1}:{current_lang}:{current_genre}",
+            )
+        )
+    nav_row.append(
+        InlineKeyboardButton(
+            text=f"📄 {page} / {total_pages}",
+            callback_data="noop",
+        )
+    )
+    if page < total_pages:
+        nav_row.append(
+            InlineKeyboardButton(
+                text=t(lang, "catalog.next_btn"),
+                callback_data=f"cat:page:{page + 1}:{current_lang}:{current_genre}",
+            )
+        )
+    if nav_row:
+        buttons.append(nav_row)
+
+    # Row 2: Language filters
+    lang_row: list[InlineKeyboardButton] = [
+        InlineKeyboardButton(
+            text=f"{'✅ ' if current_lang == 'all' else ''}{t(lang, 'catalog.filter_all')}",
+            callback_data=f"cat:lang:all:{current_genre}",
+        ),
+        InlineKeyboardButton(
+            text=f"{'✅ ' if current_lang == 'uz' else ''}🇺🇿 UZ",
+            callback_data=f"cat:lang:uz:{current_genre}",
+        ),
+        InlineKeyboardButton(
+            text=f"{'✅ ' if current_lang == 'ru' else ''}🇷🇺 RU",
+            callback_data=f"cat:lang:ru:{current_genre}",
+        ),
+        InlineKeyboardButton(
+            text=f"{'✅ ' if current_lang == 'en' else ''}🇬🇧 EN",
+            callback_data=f"cat:lang:en:{current_genre}",
+        ),
+    ]
+    buttons.append(lang_row)
+
+    # Row 3: Genre filters
+    genre_row: list[InlineKeyboardButton] = [
+        InlineKeyboardButton(
+            text=f"{'✅ ' if current_genre == 'all' else ''}🏷️ {t(lang, 'catalog.filter_all')}",
+            callback_data=f"cat:genre:all:{current_lang}",
+        ),
+        InlineKeyboardButton(
+            text=f"{'✅ ' if current_genre == 'tarixiy' else ''}Tarixiy",
+            callback_data=f"cat:genre:tarixiy:{current_lang}",
+        ),
+        InlineKeyboardButton(
+            text=f"{'✅ ' if current_genre == 'badiiy' else ''}Badiiy / Drama",
+            callback_data=f"cat:genre:badiiy:{current_lang}",
+        ),
+        InlineKeyboardButton(
+            text=f"{'✅ ' if current_genre == 'falsafa' else ''}Falsafa",
+            callback_data=f"cat:genre:falsafa:{current_lang}",
+        ),
+    ]
+    buttons.append(genre_row)
+
+    # Row 4: Search & Reset
+    buttons.append([
+        InlineKeyboardButton(text=f"🔍 {t(lang, 'menu.search')}", callback_data="cat:search"),
+        InlineKeyboardButton(text=t(lang, "catalog.reset_filters"), callback_data="cat:reset"),
+    ])
+
+    return InlineKeyboardMarkup(inline_keyboard=buttons)

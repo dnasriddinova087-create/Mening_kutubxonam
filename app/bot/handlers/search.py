@@ -22,6 +22,7 @@ _SEARCH_CACHE: dict[str, list[BookDTO]] = {}
 
 ALL_MENU_TEXTS = {
     "🔎 Kitob qidirish", "🔍 Kitob qidirish", "🔎 Поиск книг", "🔍 Поиск книг", "🔎 Search Books", "🔍 Search Books",
+    "📚 Barcha kitoblar katalogi", "📚 Каталог всех книг", "📚 All Books Catalog",
     "✨ Kitob tavsiya qilish", "✨ Рекомендации", "✨ Recommendations",
     "🔖 Sevimli kitoblarim", "🔖 Мои избранные", "🔖 My Favorites",
     "📚 O‘qish ro‘yxatim", "📚 O'qish ro'yxatim", "📚 Список чтения", "📚 Reading List",

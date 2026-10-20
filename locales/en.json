@@ -4,6 +4,7 @@
   "help_text": "📖 <b>KITOBXON AI — Help Guide</b>\n\n<b>Search options:</b>\n• Full or partial book title (e.g., <i>To Kill a Mockingbird</i>)\n• Author name (e.g., <i>Harper Lee</i>)\n• ISBN number (e.g., <i>9780061120084</i>)\n• Latin or Cyrillic script supported\n\n<b>Commands:</b>\n/start — Open main menu\n/search — Search for books\n/favorites — Your saved books\n/profile — Your profile and reading statistics\n/recommend — Book recommendations\n/language — Switch language\n/help — This help guide\n/cancel — Cancel current action",
   "menu": {
     "search": "🔎 Search Books",
+    "catalog": "📚 All Books Catalog",
     "recommend": "✨ Recommendations",
     "favorites": "🔖 My Favorites",
     "reading_list": "📚 Reading List",
@@ -111,6 +112,20 @@
     "lang_ru": "🇷🇺 Russian",
     "lang_en": "🇬🇧 English",
     "lang_all": "🌍 All languages"
+  },
+  "catalog": {
+    "title": "📚 <b>All Books Catalog</b>",
+    "page_header": "📚 <b>Books Catalog</b> (Page {page}/{total_pages})\n📊 Total books: <b>{total_books}</b>\n{filter_desc}\n\nUse the buttons below to browse pages or filter by language/genre:",
+    "empty": "😔 No books found matching the selected filter.",
+    "open_book": "📖 Open Book",
+    "prev_btn": "⬅️ Previous",
+    "next_btn": "Next ➡️",
+    "filter_all": "All",
+    "filter_uz": "🇺🇿 Uzbek",
+    "filter_ru": "🇷🇺 Russian",
+    "filter_en": "🇬🇧 English",
+    "reset_filters": "🔄 Reset",
+    "no_cover": "No cover image available"
   },
   "errors": {
     "general": "⚠️ An unexpected error occurred. Please try again shortly.",
