@@ -69,13 +69,19 @@ async def register_bot_commands(bot: Bot) -> None:
         logger.warning(f"Could not register BotFather commands: {e}")
 
 
-def get_fsm_storage():
-    """Returns RedisStorage if available, otherwise MemoryStorage."""
+async def get_fsm_storage():
+    """Returns RedisStorage if Redis is reachable, otherwise MemoryStorage."""
     if settings.REDIS_URL:
         try:
+            import redis.asyncio as aioredis
+
+            r = aioredis.from_url(settings.REDIS_URL, socket_connect_timeout=1)
+            await r.ping()
+            await r.aclose()
+            logger.info("Connected to Redis FSM storage.")
             return RedisStorage.from_url(settings.REDIS_URL)
-        except Exception as e:
-            logger.warning(f"Redis initialization failed: {e}. Falling back to MemoryStorage.")
+        except Exception:
+            logger.info("Redis is offline or not running. Using in-memory FSM storage fallback.")
     return MemoryStorage()
 
 
@@ -95,7 +101,7 @@ async def main() -> None:
         default=DefaultBotProperties(parse_mode="HTML"),
     )
 
-    storage = get_fsm_storage()
+    storage = await get_fsm_storage()
     dp = Dispatcher(storage=storage)
 
     # Register Middlewares
