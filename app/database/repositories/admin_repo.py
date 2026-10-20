@@ -60,6 +60,11 @@ class AdminRepository:
         month_start = now - timedelta(days=30)
 
         total_users = (await self.session.execute(select(func.count(User.id)))).scalar() or 0
+        registered_today = (
+            await self.session.execute(
+                select(func.count(User.id)).where(User.created_at >= today_start)
+            )
+        ).scalar() or 0
         active_today = (
             await self.session.execute(
                 select(func.count(User.id)).where(User.last_active_at >= today_start)
@@ -73,6 +78,11 @@ class AdminRepository:
 
         total_books = (await self.session.execute(select(func.count(Book.id)))).scalar() or 0
         total_searches = (await self.session.execute(select(func.count(SearchHistory.id)))).scalar() or 0
+        today_searches = (
+            await self.session.execute(
+                select(func.count(SearchHistory.id)).where(SearchHistory.created_at >= today_start)
+            )
+        ).scalar() or 0
         total_favorites = (await self.session.execute(select(func.count(Favorite.id)))).scalar() or 0
         pending_reports = (
             await self.session.execute(
@@ -80,14 +90,25 @@ class AdminRepository:
             )
         ).scalar() or 0
 
+        # Language distribution
+        lang_rows = (
+            await self.session.execute(
+                select(User.language, func.count(User.id)).group_by(User.language)
+            )
+        ).all()
+        lang_stats = {r[0]: r[1] for r in lang_rows}
+
         return {
             "total_users": total_users,
+            "registered_today": registered_today,
             "active_today": active_today,
             "active_month": active_month,
             "total_books": total_books,
             "total_searches": total_searches,
+            "today_searches": today_searches,
             "total_favorites": total_favorites,
             "pending_reports": pending_reports,
+            "lang_stats": lang_stats,
         }
 
     async def create_report(
@@ -119,6 +140,44 @@ class AdminRepository:
             .where(Report.id == report_id)
             .values(status="resolved", resolved_at=datetime.now(UTC))
         )
+        res = await self.session.execute(stmt)
+        await self.session.commit()
+        return res.rowcount > 0
+
+    async def get_setting(self, key: str, default: Any = None) -> Any:
+        from app.database.models import AppSetting
+        stmt = select(AppSetting).where(AppSetting.key == key)
+        setting = (await self.session.execute(stmt)).scalar_one_or_none()
+        if setting and setting.value_json is not None:
+            return setting.value_json
+        return default
+
+    async def set_setting(self, key: str, value: Any) -> Any:
+        from app.database.models import AppSetting
+        stmt = select(AppSetting).where(AppSetting.key == key)
+        setting = (await self.session.execute(stmt)).scalar_one_or_none()
+        val_dict = value if isinstance(value, dict) else {"value": value}
+        if setting:
+            setting.value_json = val_dict
+            setting.updated_at = datetime.now(UTC)
+        else:
+            setting = AppSetting(key=key, value_json=val_dict)
+            self.session.add(setting)
+        await self.session.commit()
+        return setting.value_json
+
+    async def get_all_settings(self) -> dict[str, Any]:
+        from app.database.models import AppSetting
+        stmt = select(AppSetting)
+        rows = (await self.session.execute(stmt)).scalars().all()
+        return {r.key: r.value_json for r in rows}
+
+    async def list_admins(self) -> list[Admin]:
+        stmt = select(Admin).order_by(Admin.id.asc())
+        return list((await self.session.execute(stmt)).scalars().all())
+
+    async def update_admin_role(self, admin_id: int, role: str) -> bool:
+        stmt = update(Admin).where(Admin.id == admin_id).values(role=role)
         res = await self.session.execute(stmt)
         await self.session.commit()
         return res.rowcount > 0

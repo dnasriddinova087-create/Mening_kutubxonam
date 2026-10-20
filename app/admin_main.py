@@ -5,8 +5,18 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.admin.routes import api, auth, books, dashboard, reports, users
-from app.core.config import settings
+from app.admin.routes import (
+    admins,
+    api,
+    audit_logs,
+    auth,
+    books,
+    dashboard,
+    reports,
+    settings,
+    users,
+)
+from app.core.config import settings as app_settings
 from app.core.logging import logger, setup_logging
 from app.database.session import init_db
 
@@ -36,6 +46,9 @@ app.include_router(dashboard.router)
 app.include_router(books.router)
 app.include_router(users.router)
 app.include_router(reports.router)
+app.include_router(settings.router)
+app.include_router(audit_logs.router)
+app.include_router(admins.router)
 app.include_router(api.router)
 
 
@@ -48,7 +61,7 @@ async def root():
 if __name__ == "__main__":
     uvicorn.run(
         "app.admin_main:app",
-        host=settings.ADMIN_HOST,
-        port=settings.ADMIN_PORT,
+        host=app_settings.ADMIN_HOST,
+        port=app_settings.ADMIN_PORT,
         reload=False,
     )

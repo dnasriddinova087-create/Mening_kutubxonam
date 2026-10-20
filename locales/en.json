@@ -19,7 +19,8 @@
     "cancelled": "❌ Search cancelled.",
     "page_info": "Page {page} / {total_pages}",
     "prev_btn": "⬅️ Previous",
-    "next_btn": "Next ➡️"
+    "next_btn": "Next ➡️",
+    "other_languages_header": "🌐 <b>Books in other languages:</b>"
   },
   "book": {
     "title": "📚 <b>{title}</b>",
@@ -29,6 +30,7 @@
     "genres": "🏷️ <b>Genres:</b> {genres}",
     "isbn": "🔢 <b>ISBN:</b> {isbn}",
     "language": "🌐 <b>Language:</b> {language}",
+    "language_unknown": "Language not specified",
     "source": "🏛️ <b>Source:</b> {source}",
     "about_header": "📖 <b>ABOUT THE BOOK</b>",
     "main_idea_header": "💡 <b>CORE IDEA</b>",
@@ -100,8 +102,15 @@
     "empty": "Not enough data for recommendations yet. Search and favorite books to get personalized picks!"
   },
   "language": {
-    "choose": "🌐 Iltimos, tilni tanlang / Пожалуйста, выберите язык / Please select your language:",
-    "changed": "✅ Language successfully changed to: <b>English</b> 🇬🇧"
+    "choose": "🌐 Iltimos, interfeys tilini tanlang / Пожалуйста, выберите язык интерфейса / Please select interface language:",
+    "changed": "✅ Language successfully changed to: <b>English</b> 🇬🇧",
+    "book_lang_btn": "📚 Book search language",
+    "book_lang_choose": "📚 Which book languages do you prefer in search results?",
+    "book_lang_changed": "✅ Book search language configured: <b>{langs}</b>",
+    "lang_uz": "🇺🇿 Uzbek",
+    "lang_ru": "🇷🇺 Russian",
+    "lang_en": "🇬🇧 English",
+    "lang_all": "🌍 All languages"
   },
   "errors": {
     "general": "⚠️ An unexpected error occurred. Please try again shortly.",

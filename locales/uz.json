@@ -19,7 +19,8 @@
     "cancelled": "❌ Qidiruv bekor qilindi.",
     "page_info": "Sahifa {page} / {total_pages}",
     "prev_btn": "⬅️ Oldingi",
-    "next_btn": "Keyingi ➡️"
+    "next_btn": "Keyingi ➡️",
+    "other_languages_header": "🌐 <b>Boshqa tillardagi kitoblar:</b>"
   },
   "book": {
     "title": "📚 <b>{title}</b>",
@@ -29,6 +30,7 @@
     "genres": "🏷️ <b>Janrlar:</b> {genres}",
     "isbn": "🔢 <b>ISBN:</b> {isbn}",
     "language": "🌐 <b>Tili:</b> {language}",
+    "language_unknown": "Tili aniqlanmagan",
     "source": "🏛️ <b>Manba:</b> {source}",
     "about_header": "📖 <b>KITOB HAQIDA</b>",
     "main_idea_header": "💡 <b>ASOSIY G‘OYA</b>",
@@ -100,8 +102,15 @@
     "empty": "Hozircha yetarli tavsiyalar mavjud emas. Ko'proq kitoblarni qidiring yoki sevimlilarga qo'shing!"
   },
   "language": {
-    "choose": "🌐 Iltimos, tilni tanlang / Пожалуйста, выберите язык / Please select your language:",
-    "changed": "✅ Til muvaffaqiyatli o'zgartirildi: <b>O'zbek tili</b> 🇺🇿"
+    "choose": "🌐 Iltimos, interfeys tilini tanlang / Пожалуйста, выберите язык интерфейса / Please select interface language:",
+    "changed": "✅ Til muvaffaqiyatli o'zgartirildi: <b>O'zbek tili</b> 🇺🇿",
+    "book_lang_btn": "📚 Kitob qidiruv tili",
+    "book_lang_choose": "📚 Qidiruvda qaysi tildagi kitoblar ustuvor bo'lishini xohlaysiz?",
+    "book_lang_changed": "✅ Kitob qidiruv tili sozlandi: <b>{langs}</b>",
+    "lang_uz": "🇺🇿 O'zbekcha",
+    "lang_ru": "🇷🇺 Русский",
+    "lang_en": "🇬🇧 English",
+    "lang_all": "🌍 Barcha tillar (All)"
   },
   "errors": {
     "general": "⚠️ Kutilmagan xatolik yuz berdi. Iltimos, birozdan so'ng qayta urinib ko'ring.",

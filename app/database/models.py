@@ -31,6 +31,7 @@ class User(Base):
     username: Mapped[str | None] = mapped_column(String(64), nullable=True)
     full_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     language: Mapped[str] = mapped_column(String(10), default="uz", nullable=False)
+    preferred_book_languages: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
     reading_goal: Mapped[int] = mapped_column(Integer, default=5, nullable=False)
     is_blocked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)

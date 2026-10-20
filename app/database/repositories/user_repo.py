@@ -42,6 +42,7 @@ class UserRepository:
             username=username,
             full_name=full_name,
             language=language,
+            preferred_book_languages=[language],
             last_active_at=datetime.now(UTC),
         )
         self.session.add(user)
@@ -53,7 +54,26 @@ class UserRepository:
         stmt = (
             update(User)
             .where(User.telegram_id == telegram_id)
-            .values(language=language, updated_at=datetime.now(UTC))
+            .values(
+                language=language,
+                preferred_book_languages=[language],
+                updated_at=datetime.now(UTC),
+            )
+        )
+        result = await self.session.execute(stmt)
+        await self.session.commit()
+        return result.rowcount > 0
+
+    async def update_preferred_book_languages(
+        self, telegram_id: int, languages: list[str]
+    ) -> bool:
+        stmt = (
+            update(User)
+            .where(User.telegram_id == telegram_id)
+            .values(
+                preferred_book_languages=languages,
+                updated_at=datetime.now(UTC),
+            )
         )
         result = await self.session.execute(stmt)
         await self.session.commit()

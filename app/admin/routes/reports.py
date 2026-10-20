@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.admin.dependencies import get_current_admin
+from app.admin.dependencies import AdminRole, get_current_admin, require_roles
 from app.database.models import Admin
 from app.database.repositories.admin_repo import AdminRepository
 from app.database.session import get_db
@@ -35,7 +35,7 @@ async def list_reports_page(
 @router.post("/{report_id}/resolve")
 async def resolve_report_submit(
     report_id: int,
-    admin: Admin = Depends(get_current_admin),
+    admin: Admin = Depends(require_roles(AdminRole.SUPPORT, AdminRole.BOOK_MANAGER, AdminRole.SUPER_ADMIN)),
     session: AsyncSession = Depends(get_db),
 ):
     admin_repo = AdminRepository(session)

@@ -12,6 +12,14 @@ def setup_logging():
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
+    # Ensure UTF-8 stream output on Windows
+    if hasattr(sys.stdout, "reconfigure"):
+        try:
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(formatter)
 

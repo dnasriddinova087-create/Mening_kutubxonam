@@ -29,6 +29,7 @@
           <th>Muqova</th>
           <th>Nomi</th>
           <th>Muallif</th>
+          <th>Til</th>
           <th>Manba</th>
           <th>Kirish turi</th>
           <th>Holat</th>
@@ -48,6 +49,9 @@
           </td>
           <td><b>{{ book.original_title }}</b></td>
           <td>{{ (book.authors or []) | join(', ') }}</td>
+          <td>
+            <span class="badge" style="background: rgba(47, 129, 247, 0.15); color: #58a6ff;">{{ (book.language or 'noma\'lum')|upper }}</span>
+          </td>
           <td><span class="badge" style="background: rgba(255,255,255,0.1);">{{ book.source }}</span></td>
           <td>
             <span class="badge badge-{{ book.access_type }}">{{ book.access_type }}</span>
@@ -60,12 +64,15 @@
             {% endif %}
           </td>
           <td>
-            <div style="display: flex; gap: 0.5rem;">
+            <div style="display: flex; gap: 0.4rem; align-items: center;">
               <a href="/admin/books/{{ book.id }}/edit" class="btn btn-primary btn-sm">Tahrirlash</a>
               <form method="POST" action="/admin/books/{{ book.id }}/toggle-archive">
-                <button type="submit" class="btn btn-danger btn-sm">
-                  {% if book.is_archived %}Tiklash{% else %}Arxivlash{% endif %}
+                <button type="submit" class="btn btn-sm" style="background: #21262d; color: var(--text-main);">
+                  {% if book.is_archived %}Tiklash{% else %}Arxiv{% endif %}
                 </button>
+              </form>
+              <form method="POST" action="/admin/books/{{ book.id }}/delete" onsubmit="return confirm('Haqiqatan ham bu kitobni butunlay o\'chirmoqchimisiz?');">
+                <button type="submit" class="btn btn-danger btn-sm">O'chirish</button>
               </form>
             </div>
           </td>

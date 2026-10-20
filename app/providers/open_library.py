@@ -82,11 +82,17 @@ class OpenLibraryProvider(BaseBookProvider):
             logger.warning(f"Error parsing Open Library doc: {e}")
             return None
 
-    async def search(self, query: str, limit: int = 10) -> list[BookDTO]:
-        params = {
+    async def search(self, query: str, limit: int = 10, lang_code: str | None = None, **kwargs) -> list[BookDTO]:
+        params: dict[str, Any] = {
             "q": query,
             "limit": min(limit, 20),
         }
+        if lang_code:
+            mapping = {"uz": "uzb", "ru": "rus", "en": "eng", "uzb": "uzb", "rus": "rus", "eng": "eng"}
+            ol_lang = mapping.get(lang_code.lower())
+            if ol_lang:
+                params["language"] = ol_lang
+
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 resp = await client.get(self.search_url, params=params)

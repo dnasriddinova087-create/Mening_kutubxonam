@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Tizim sozlamalari — KITOBXON AI Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">⚙️ Tizim sozlamalari</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Bot parametrlari, qidiruv algoritmi, AI va monitoring boshqaruvi</p>
+  </div>
+</div>
+
+{% if success_msg %}
+<div style="background: rgba(35, 134, 54, 0.2); border: 1px solid var(--success); color: #3fb950; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+  <span>✅</span>
+  <span>Sozlamalar muvaffaqiyatli yangilandi va amalda qo'llandi!</span>
+</div>
+{% endif %}
+
+<!-- System Health Status Widget -->
+<div class="card" style="border-left: 4px solid var(--primary);">
+  <h2 style="font-size: 1.2rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+    <span>🩺</span> Texnik monitoring & Integratsiyalar holati
+  </h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+    <div style="background: var(--bg-main); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+      <div style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Database (SQLAlchemy)</div>
+      <div style="font-size: 1.1rem; font-weight: 700; color: #3fb950; margin-top: 0.25rem;">
+        🟢 {{ health.db.status|upper }}
+      </div>
+      <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">Kechikish: {{ health.db.latency_ms }} ms</div>
+    </div>
+
+    <div style="background: var(--bg-main); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+      <div style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Redis FSM Storage</div>
+      <div style="font-size: 1.1rem; font-weight: 700; color: {% if 'online' in health.redis.status %}#3fb950{% else %}#d29922{% endif %}; margin-top: 0.25rem;">
+        {% if 'online' in health.redis.status %}🟢 ONLINE{% else %}🟡 FALLBACK{% endif %}
+      </div>
+      <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">{{ health.redis.status }}</div>
+    </div>
+
+    <div style="background: var(--bg-main); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+      <div style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Google Books API</div>
+      <div style="font-size: 1.1rem; font-weight: 700; color: {% if health.google_books.status == 'online' %}#3fb950{% else %}#f85149{% endif %}; margin-top: 0.25rem;">
+        {% if health.google_books.status == 'online' %}🟢 ONLINE{% else %}🔴 {{ health.google_books.status }}{% endif %}
+      </div>
+      <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">Kechikish: {{ health.google_books.latency_ms }} ms</div>
+    </div>
+
+    <div style="background: var(--bg-main); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+      <div style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Open Library API</div>
+      <div style="font-size: 1.1rem; font-weight: 700; color: {% if health.open_library.status == 'online' %}#3fb950{% else %}#f85149{% endif %}; margin-top: 0.25rem;">
+        {% if health.open_library.status == 'online' %}🟢 ONLINE{% else %}🔴 {{ health.open_library.status }}{% endif %}
+      </div>
+      <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">Kechikish: {{ health.open_library.latency_ms }} ms</div>
+    </div>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+  <!-- Section A: Umumiy sozlamalar -->
+  <div class="card">
+    <h2 style="font-size: 1.25rem; margin-bottom: 1.25rem;">🌐 A. Umumiy bot sozlamalari</h2>
+    <form method="POST" action="/admin/settings">
+      <input type="hidden" name="section" value="general">
+      <div class="form-group">
+        <label>Bot nomi</label>
+        <input type="text" name="bot_name" value="{{ general.bot_name }}" required>
+      </div>
+      <div class="form-group">
+        <label>Qisqacha tavsifi</label>
+        <textarea name="bot_description" rows="2">{{ general.bot_description }}</textarea>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>Standart interfeys tili</label>
+          <select name="default_interface_language">
+            <option value="uz" {% if general.default_interface_language == 'uz' %}selected{% endif %}>🇺🇿 O'zbekcha (uz)</option>
+            <option value="ru" {% if general.default_interface_language == 'ru' %}selected{% endif %}>🇷🇺 Русский (ru)</option>
+            <option value="en" {% if general.default_interface_language == 'en' %}selected{% endif %}>🇬🇧 English (en)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Standart kitob qidiruv tili</label>
+          <select name="default_book_language">
+            <option value="uz" {% if general.default_book_language == 'uz' %}selected{% endif %}>🇺🇿 O'zbekcha kitoblar</option>
+            <option value="ru" {% if general.default_book_language == 'ru' %}selected{% endif %}>🇷🇺 Ruscha kitoblar</option>
+            <option value="en" {% if general.default_book_language == 'en' %}selected{% endif %}>🇬🇧 Inglizcha kitoblar</option>
+          </select>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>Vaqt zonasi</label>
+          <input type="text" name="timezone" value="{{ general.timezone }}">
+        </div>
+        <div class="form-group">
+          <label>Qo'llab-quvvatlash (Support username)</label>
+          <input type="text" name="support_contact" value="{{ general.support_contact }}">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Saqlash</button>
+    </form>
+  </div>
+
+  <!-- Section B: Qidiruv sozlamalari -->
+  <div class="card">
+    <h2 style="font-size: 1.25rem; margin-bottom: 1.25rem;">🔎 B. Kitob qidiruvi sozlamalari</h2>
+    <form method="POST" action="/admin/settings">
+      <input type="hidden" name="section" value="search">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>Natijalar soni (limit)</label>
+          <input type="number" name="search_limit" value="{{ search_cfg.search_limit }}" min="5" max="50">
+        </div>
+        <div class="form-group">
+          <label>API timeout (soniya)</label>
+          <input type="number" name="api_timeout" value="{{ search_cfg.api_timeout }}" min="3" max="30">
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>Kesh amal qilish muddati (soniya)</label>
+          <input type="number" name="cache_ttl" value="{{ search_cfg.cache_ttl }}" min="60">
+        </div>
+        <div class="form-group">
+          <label>Foydalanuvchi qidiruv limiti (/daqiqa)</label>
+          <input type="number" name="search_rate_limit" value="{{ search_cfg.search_rate_limit }}" min="5" max="100">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Til bo'yicha ustuvorlik rejimi</label>
+        <select name="language_priority">
+          <option value="strict" {% if search_cfg.language_priority == 'strict' %}selected{% endif %}>Qat'iy: Tanlangan til kitoblari eng yuqorida</option>
+          <option value="balanced" {% if search_cfg.language_priority == 'balanced' %}selected{% endif %}>Balanslangan: O'xshashlik va til hisobga olinadi</option>
+        </select>
+      </div>
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+        <input type="checkbox" id="fallback_enabled" name="fallback_enabled" {% if search_cfg.fallback_enabled %}checked{% endif %} style="width: auto;">
+        <label for="fallback_enabled" style="margin-bottom: 0; cursor: pointer;">Natija kam bo'lganda transliteratsiya va boshqa manbalarga o'tish (Fallback)</label>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Saqlash</button>
+    </form>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+  <!-- Section C: AI Sozlamalari -->
+  <div class="card">
+    <h2 style="font-size: 1.25rem; margin-bottom: 1.25rem;">✨ C. Sun'iy intellekt (AI) tahlili</h2>
+    <form method="POST" action="/admin/settings">
+      <input type="hidden" name="section" value="ai">
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+        <input type="checkbox" id="ai_enabled" name="ai_enabled" {% if ai_cfg.ai_enabled %}checked{% endif %} style="width: auto;">
+        <label for="ai_enabled" style="margin-bottom: 0; cursor: pointer; font-weight: 600;">AI tahlil funksiyasi yoqilgan</label>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>AI Provayder</label>
+          <select name="ai_provider">
+            <option value="gemini" {% if ai_cfg.ai_provider == 'gemini' %}selected{% endif %}>Google Gemini</option>
+            <option value="openai" {% if ai_cfg.ai_provider == 'openai' %}selected{% endif %}>OpenAI ChatGPT</option>
+            <option value="mock" {% if ai_cfg.ai_provider == 'mock' %}selected{% endif %}>Lokal Metadata (Mock)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Model nomi</label>
+          <input type="text" name="ai_model" value="{{ ai_cfg.ai_model }}">
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>Kunlik so'rov limiti (/foydalanuvchi)</label>
+          <input type="number" name="daily_limit_per_user" value="{{ ai_cfg.daily_limit_per_user }}" min="1" max="100">
+        </div>
+        <div class="form-group">
+          <label>Javob uzunligi chegarasi (belgi)</label>
+          <input type="number" name="max_response_length" value="{{ ai_cfg.max_response_length }}" min="300" max="4000">
+        </div>
+      </div>
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+        <input type="checkbox" id="ai_cache_enabled" name="cache_enabled" {% if ai_cfg.cache_enabled %}checked{% endif %} style="width: auto;">
+        <label for="ai_cache_enabled" style="margin-bottom: 0; cursor: pointer;">Tahlillarni bazada keshlab qayta ishlatish (Tejamkorlik)</label>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">Saqlash</button>
+    </form>
+  </div>
+
+  <!-- Section D: Foydalanuvchilar va Xavfsizlik -->
+  <div class="card">
+    <h2 style="font-size: 1.25rem; margin-bottom: 1.25rem;">👥 D. Foydalanuvchi & Xavfsizlik</h2>
+    <form method="POST" action="/admin/settings">
+      <input type="hidden" name="section" value="user">
+      <div class="form-group">
+        <label>Tugmalar bosish limiti (Rate limit, soniya)</label>
+        <input type="number" step="0.1" name="rate_limit_seconds" value="{{ user_cfg.rate_limit_seconds }}" min="0.1" max="5.0">
+      </div>
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+        <input type="checkbox" id="spam_protection" name="spam_protection" {% if user_cfg.spam_protection %}checked{% endif %} style="width: auto;">
+        <label for="spam_protection" style="margin-bottom: 0; cursor: pointer;">Spam va bot himoyasini faollashtirish</label>
+      </div>
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+        <input type="checkbox" id="feedback_enabled" name="feedback_enabled" {% if user_cfg.feedback_enabled %}checked{% endif %} style="width: auto;">
+        <label for="feedback_enabled" style="margin-bottom: 0; cursor: pointer;">Foydalanuvchilarga xato haqida xabar (Report) yuborishga ruxsat</label>
+      </div>
+      <div class="form-group">
+        <label>Shaxsiy ma'lumotlarni saqlash muddati</label>
+        <select name="gdpr_policy">
+          <option value="30_days" {% if user_cfg.gdpr_policy == '30_days' %}selected{% endif %}>30 kun (Faolsiz qidiruvlar tozalanadi)</option>
+          <option value="90_days" {% if user_cfg.gdpr_policy == '90_days' %}selected{% endif %}>90 kun</option>
+          <option value="unlimited" {% if user_cfg.gdpr_policy == 'unlimited' %}selected{% endif %}>Cheksiz saqlansin</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">Saqlash</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

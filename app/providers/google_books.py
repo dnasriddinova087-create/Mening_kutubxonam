@@ -102,18 +102,36 @@ class GoogleBooksProvider(BaseBookProvider):
             logger.warning(f"Error parsing Google Books volume: {e}")
             return None
 
-    async def search(self, query: str, limit: int = 10) -> list[BookDTO]:
-        params = {
+    async def search(self, query: str, limit: int = 10, lang_restrict: str | None = None, **kwargs) -> list[BookDTO]:
+        import asyncio
+        params: dict[str, Any] = {
             "q": query,
             "maxResults": min(limit, 40),
             "printType": "books",
         }
+        if lang_restrict:
+            # Google Books accepts 2-letter codes, e.g. 'uz', 'ru', 'en'
+            clean_code = lang_restrict.lower()
+            if clean_code in ("uzb", "uz"):
+                params["langRestrict"] = "uz"
+            elif clean_code in ("rus", "ru"):
+                params["langRestrict"] = "ru"
+            elif clean_code in ("eng", "en"):
+                params["langRestrict"] = "en"
+            else:
+                params["langRestrict"] = clean_code[:2]
+
         if self.api_key:
             params["key"] = self.api_key
 
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 resp = await client.get(self.base_url, params=params)
+                if resp.status_code == 429:
+                    logger.warning("Google Books API rate limited (429). Retrying after 1s...")
+                    await asyncio.sleep(1.0)
+                    resp = await client.get(self.base_url, params=params)
+
                 if resp.status_code != 200:
                     logger.warning(f"Google Books API returned status {resp.status_code}")
                     return []

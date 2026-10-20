@@ -38,6 +38,12 @@ async def init_db() -> None:
     try:
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
+            # Safe backward-compatible column migration
+            try:
+                from sqlalchemy import text
+                await conn.execute(text("ALTER TABLE users ADD COLUMN preferred_book_languages JSON DEFAULT '[]'"))
+            except Exception:
+                pass  # column already exists or table freshly created
         logger.info("Database initialized successfully.")
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")

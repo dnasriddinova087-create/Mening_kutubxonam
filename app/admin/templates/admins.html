@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Adminlar boshqaruvi — KITOBXON AI Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">🛡️ Administratorlar va Rollar boshqaruvi</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Platforma ma'murlari ro'yxati, rollari va ruxsat darajalari</p>
+  </div>
+</div>
+
+{% if success %}
+<div style="background: rgba(35, 134, 54, 0.2); border: 1px solid var(--success); color: #3fb950; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+  ✅ {{ success }}
+</div>
+{% endif %}
+
+{% if error %}
+<div style="background: rgba(218, 54, 51, 0.2); border: 1px solid var(--danger); color: #f85149; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+  ⚠️ {{ error }}
+</div>
+{% endif %}
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+  <div class="card">
+    <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Mavjud administratorlar</h2>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>#ID</th>
+            <th>Foydalanuvchi</th>
+            <th>Rol</th>
+            <th>Holat</th>
+            <th>Yaratilgan</th>
+            <th>Amallar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in admins %}
+          <tr>
+            <td>#{{ a.id }}</td>
+            <td><b>{{ a.username }}</b></td>
+            <td>
+              <form method="POST" action="/admin/admins/{{ a.id }}/role" style="display: flex; gap: 0.5rem; align-items: center;">
+                <select name="role" style="padding: 0.3rem 0.5rem; font-size: 0.85rem; width: auto;">
+                  <option value="SUPER_ADMIN" {% if a.role in ('SUPER_ADMIN', 'superadmin', 'admin') %}selected{% endif %}>SUPER_ADMIN</option>
+                  <option value="BOOK_MANAGER" {% if a.role in ('BOOK_MANAGER', 'book_manager') %}selected{% endif %}>BOOK_MANAGER</option>
+                  <option value="SUPPORT" {% if a.role in ('SUPPORT', 'support') %}selected{% endif %}>SUPPORT</option>
+                  <option value="ANALYST" {% if a.role in ('ANALYST', 'analyst') %}selected{% endif %}>ANALYST</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary">Saqlash</button>
+              </form>
+            </td>
+            <td>
+              {% if a.is_active %}
+              <span class="badge badge-free">Faol</span>
+              {% else %}
+              <span class="badge badge-archived">Faolsiz</span>
+              {% endif %}
+            </td>
+            <td style="color: var(--text-muted); font-size: 0.85rem;">{{ a.created_at.strftime('%Y-%m-%d') if a.created_at else '—' }}</td>
+            <td>
+              {% if a.id != admin.id %}
+              <form method="POST" action="/admin/admins/{{ a.id }}/toggle-active" style="display: inline;">
+                <button type="submit" class="btn btn-sm {% if a.is_active %}btn-danger{% else %}btn-success{% endif %}" onclick="return confirm('Haqiqatan ham ushbu administrator holatini o\'zgartirmoqchimisiz?');">
+                  {% if a.is_active %}Faolsizlantirish{% else %}Faollashtirish{% endif %}
+                </button>
+              </form>
+              {% else %}
+              <span style="color: var(--text-muted); font-size: 0.8rem;">(Siz)</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">➕ Yangi admin yaratish</h2>
+    <form method="POST" action="/admin/admins/new">
+      <div class="form-group">
+        <label>Foydalanuvchi nomi</label>
+        <input type="text" name="username" placeholder="masalan, kitobxon_manager" required>
+      </div>
+      <div class="form-group">
+        <label>Parol</label>
+        <input type="password" name="password" placeholder="Kamida 6 belgi" required>
+      </div>
+      <div class="form-group">
+        <label>Ruxsat roli</label>
+        <select name="role" required>
+          <option value="SUPER_ADMIN">SUPER_ADMIN (Barcha huquqlar)</option>
+          <option value="BOOK_MANAGER">BOOK_MANAGER (Kitoblar & Katalog)</option>
+          <option value="SUPPORT">SUPPORT (Foydalanuvchilar & Murojaat)</option>
+          <option value="ANALYST">ANALYST (Statistika & Hisobotlar)</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-success" style="width: 100%;">Admin yaratish</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

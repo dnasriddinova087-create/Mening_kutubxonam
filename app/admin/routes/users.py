@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.admin.dependencies import get_current_admin
+from app.admin.dependencies import AdminRole, require_roles
 from app.database.models import Admin
 from app.database.repositories.admin_repo import AdminRepository
 from app.database.repositories.user_repo import UserRepository
@@ -18,7 +18,7 @@ templates = Jinja2Templates(directory="app/admin/templates")
 async def list_users_page(
     request: Request,
     q: str | None = None,
-    admin: Admin = Depends(get_current_admin),
+    admin: Admin = Depends(require_roles(AdminRole.SUPPORT, AdminRole.SUPER_ADMIN)),
     session: AsyncSession = Depends(get_db),
 ):
     repo = UserRepository(session)
@@ -39,7 +39,7 @@ async def list_users_page(
 @router.post("/{telegram_id}/toggle-block")
 async def toggle_block_user(
     telegram_id: int,
-    admin: Admin = Depends(get_current_admin),
+    admin: Admin = Depends(require_roles(AdminRole.SUPPORT, AdminRole.SUPER_ADMIN)),
     session: AsyncSession = Depends(get_db),
 ):
     user_repo = UserRepository(session)

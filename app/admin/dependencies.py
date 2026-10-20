@@ -8,6 +8,26 @@ from app.database.repositories.admin_repo import AdminRepository
 from app.database.session import get_db
 
 
+class AdminRole:
+    SUPER_ADMIN = "SUPER_ADMIN"
+    BOOK_MANAGER = "BOOK_MANAGER"
+    SUPPORT = "SUPPORT"
+    ANALYST = "ANALYST"
+
+
+def normalize_role(role: str) -> str:
+    r = (role or "").strip().upper()
+    if r in ("SUPER_ADMIN", "ADMIN", "SUPERADMIN", "ROOT"):
+        return AdminRole.SUPER_ADMIN
+    if r in ("BOOK_MANAGER", "BOOKS_MANAGER", "BOOKMANAGER"):
+        return AdminRole.BOOK_MANAGER
+    if r in ("SUPPORT", "SUPPORT_AGENT", "MODERATOR"):
+        return AdminRole.SUPPORT
+    if r in ("ANALYST", "ANALYTICS", "VIEWER"):
+        return AdminRole.ANALYST
+    return r
+
+
 async def get_current_admin(
     request: Request,
     session: AsyncSession = Depends(get_db),
@@ -54,3 +74,26 @@ async def get_current_admin(
         )
 
     return admin
+
+
+def require_roles(*allowed_roles: str):
+    """Dependency that checks if current admin has one of the allowed roles.
+    SUPER_ADMIN always has full access to all endpoints.
+    """
+    async def role_checker(admin: Admin = Depends(get_current_admin)) -> Admin:
+        user_role = normalize_role(admin.role)
+        norm_allowed = [normalize_role(r) for r in allowed_roles]
+
+        # SUPER_ADMIN has access everywhere
+        if user_role == AdminRole.SUPER_ADMIN:
+            return admin
+
+        if user_role in norm_allowed:
+            return admin
+
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Ushbu amalni bajarish uchun ruxsat yetarli emas! Sizning rolingiz: {admin.role}",
+        )
+
+    return role_checker

@@ -46,14 +46,18 @@
    - Ma'lumotlarni butunlay o'chirish (Right to be forgotten).
    - Foydalanuvchilar o'rtasida to'liq ma'lumotlar izolyatsiyasi.
 
-6. **FastAPI Administrator Paneli**:
-   - Zamonaviy qorong'i rejim (Dark theme) va responsive dizayn.
-   - Jonli statistika dashboardi (Foydalanuvchilar, faollar, qidiruvlar, eng ko'p izlangan kitoblar).
-   - Mahalliy katalogga yangi kitob qo'shish va tahrirlash.
-   - Noto'g'ri kitoblarni arxivlash / yashirish.
-   - Foydalanuvchilarni ko'rish va bloklash / blokdan chiqarish.
-   - Shikoyatlar va foydalanuvchilar murojaatlarini hal qilish.
-   - Xavfsiz PBKDF2 parol xeshlash, JWT sessiya cookie, CSRF va audit jurnallari.
+6. **FastAPI Administrator Paneli & RBAC**:
+   - Zamonaviy qorong'i rejim (Dark theme) va responsive dizayn (mobil ochiluvchi menyu).
+   - Server-tomonlama RBAC (Role-Based Access Control):
+     - `SUPER_ADMIN` (Barcha huquqlar, adminlar boshqaruvi, tizim sozlamalari, audit).
+     - `BOOK_MANAGER` (Kitoblar katalogi, metadata tahrirlash, shikoyatlar).
+     - `SUPPORT` (Foydalanuvchilar holati, bloklash, murojaatlar).
+     - `ANALYST` (Dashboard, metrikalar, statistik hisobotlar).
+   - Jonli statistika dashboardi (Foydalanuvchilar, DAU, MAU, qidiruvlar, tillar taqsimoti, eng ko'p izlangan kitoblar).
+   - Kitoblar katalogini to'liq boshqarish (Qo'shish, tahrirlash, janrlar, tillar, muqova, o'qish havolasi, arxivlash va soft/hard delete).
+   - ⚙️ **Tizim sozlamalari**: Umumiy sozlamalar, qidiruv parametrlari, AI limiti va provayderi, spam himoyasi hamda real-vaqt texnik monitoring (DB, Redis, API latency).
+   - 📜 **Audit jurnali**: Ma'murlarning barcha xavfsizlik va boshqaruv amallari (Login, kitob o'zgartirish, bloklash, sozlamalar) xavfsiz JSON tafsilotlar bilan qayd etiladi.
+   - Xavfsiz PBKDF2 parol xeshlash, JWT sessiya cookie (HttpOnly, SameSite), CSRF va IDOR himoyasi.
 
 ---
 
@@ -75,9 +79,10 @@ kitobxon-ai/
 ├── locales/                 # uz.json, ru.json, en.json tarjima fayllari
 ├── migrations/              # Alembic migratsiyalari
 ├── scripts/                 # Administrator yaratish va kitoblar to'ldirish skriptlari
-├── tests/                   # 19 ta to'liq avtomatlashtirilgan pytest testlari
+├── tests/                   # 27 ta to'liq avtomatlashtirilgan pytest testlari
 ├── compose.yaml             # Docker Compose (Bot + Admin + PostgreSQL + Redis)
 ├── Dockerfile               # Production multi-stage Dockerfile
+├── render.yaml              # Render 1-click cloud deployment blueprint
 ├── pyproject.toml           # Loyiha sozlamalari, dependencylar va Ruff/pytest konfiguratsiyasi
 ├── alembic.ini              # Alembic sozlamalari
 ├── .env.example             # Konfiguratsiya namunasi

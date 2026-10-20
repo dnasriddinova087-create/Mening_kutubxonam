@@ -19,11 +19,15 @@ class FavoriteRepository:
         await self.session.commit()
         return True
 
+    add_favorite = add
+
     async def remove(self, user_id: int, book_id: int) -> bool:
         stmt = delete(Favorite).where(Favorite.user_id == user_id, Favorite.book_id == book_id)
         result = await self.session.execute(stmt)
         await self.session.commit()
         return result.rowcount > 0
+
+    remove_favorite = remove
 
     async def is_favorite(self, user_id: int, book_id: int) -> bool:
         stmt = select(func.count(Favorite.id)).where(

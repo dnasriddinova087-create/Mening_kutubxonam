@@ -20,8 +20,23 @@ router = Router(name="search")
 _SEARCH_CACHE: dict[str, list[BookDTO]] = {}
 
 
+ALL_MENU_TEXTS = {
+    "🔎 Kitob qidirish", "🔍 Kitob qidirish", "🔎 Поиск книг", "🔍 Поиск книг", "🔎 Search Books", "🔍 Search Books",
+    "✨ Kitob tavsiya qilish", "✨ Рекомендации", "✨ Recommendations",
+    "🔖 Sevimli kitoblarim", "🔖 Мои избранные", "🔖 My Favorites",
+    "📚 O‘qish ro‘yxatim", "📚 O'qish ro'yxatim", "📚 Список чтения", "📚 Reading List",
+    "📊 Statistikam", "📊 Моя статистика", "📊 My Statistics",
+    "🌐 Til", "🌐 Язык", "🌐 Language",
+    "ℹ️ Yordam", "ℹ️ Помощь", "ℹ️ Help",
+}
+
+
 @router.message(Command("search"))
-@router.message(F.text.in_(["🔎 Kitob qidirish", "🔎 Поиск книг", "🔎 Search Books"]))
+@router.message(F.text.in_([
+    "🔎 Kitob qidirish", "🔍 Kitob qidirish",
+    "🔎 Поиск книг", "🔍 Поиск книг",
+    "🔎 Search Books", "🔍 Search Books",
+]))
 async def cmd_search_prompt(message: Message, state: FSMContext, lang: str = "uz"):
     await state.set_state(SearchStates.waiting_for_query)
     prompt_text = t(lang, "search.prompt")
@@ -95,7 +110,7 @@ async def handle_noop_callback(callback: CallbackQuery):
 
 
 @router.message(SearchStates.waiting_for_query)
-@router.message(F.text & ~F.text.startswith("/"))
+@router.message(F.text & ~F.text.startswith("/") & ~F.text.in_(ALL_MENU_TEXTS))
 async def handle_search_query(
     message: Message, state: FSMContext, session: AsyncSession, lang: str = "uz"
 ):
@@ -103,25 +118,22 @@ async def handle_search_query(
     if not query:
         return
 
-    # Check if user clicked any main menu button by mistake
-    menu_texts = [
-        "🔎 Kitob qidirish", "🔎 Поиск книг", "🔎 Search Books",
-        "✨ Kitob tavsiya qilish", "✨ Рекомендации", "✨ Recommendations",
-        "🔖 Sevimli kitoblarim", "🔖 Мои избранные", "🔖 My Favorites",
-        "📚 O‘qish ro‘yxatim", "📚 Список чтения", "📚 Reading List",
-        "📊 Statistikam", "📊 Моя статистика", "📊 My Statistics",
-        "🌐 Til", "🌐 Язык", "🌐 Language",
-        "ℹ️ Yordam", "ℹ️ Помощь", "ℹ️ Help",
-    ]
-    if query in menu_texts:
-        return
-
     wait_msg = await message.answer(t(lang, "search.searching"))
+
+    from app.database.repositories.user_repo import UserRepository
+    user_repo = UserRepository(session)
+    user = await user_repo.get_by_telegram_id(message.from_user.id) if message.from_user else None
+    preferred_langs = user.preferred_book_languages if user and user.preferred_book_languages else [lang]
 
     search_service = BookSearchService(session)
     user_service = UserService(session)
 
-    results = await search_service.search(query, limit=15)
+    results = await search_service.search(
+        query,
+        limit=15,
+        preferred_languages=preferred_langs,
+        interface_language=lang,
+    )
 
     # Log search in history
     if message.from_user:

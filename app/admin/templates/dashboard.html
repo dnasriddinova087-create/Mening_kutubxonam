@@ -1,72 +1,141 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard — KITOBXON AI Admin{% endblock %}
+{% block title %}Boshqaruv paneli — KITOBXON AI Admin{% endblock %}
 
 {% block content %}
 <div class="page-header">
   <div>
-    <h1 class="page-title">Umumiy ko'rsatkichlar</h1>
-    <p style="color: var(--text-muted); font-size: 0.9rem;">Platforma faoliyati va real vaqtdagi statistika</p>
+    <h1 class="page-title">📊 Umumiy ko'rsatkichlar va Metrikalar</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Platforma faoliyati, foydalanuvchilar oqimi va real vaqtdagi statistika</p>
   </div>
-  <div>
+  <div style="display: flex; gap: 0.75rem;">
     <a href="/admin/books/new" class="btn btn-primary">+ Yangi kitob qo'shish</a>
+    <a href="/admin/settings" class="btn btn-sm" style="background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main);">⚙️ Sozlamalar</a>
   </div>
 </div>
 
+<!-- 8 Key Metrics Grid -->
 <div class="stats-grid">
   <div class="stat-card">
     <div class="stat-label">Jami foydalanuvchilar</div>
     <div class="stat-value">{{ stats.total_users }}</div>
+    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Platformada ro'yxatdan o'tgan</div>
   </div>
+
   <div class="stat-card">
-    <div class="stat-label">Bugun faol</div>
-    <div class="stat-value" style="color: #3fb950;">{{ stats.active_today }}</div>
+    <div class="stat-label">Bugun yangi qo'shilgan</div>
+    <div class="stat-value" style="color: #3fb950;">+{{ stats.registered_today }}</div>
+    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Bugungi yangi obunachilar</div>
   </div>
+
   <div class="stat-card">
-    <div class="stat-label">Oylik faol</div>
-    <div class="stat-value">{{ stats.active_month }}</div>
+    <div class="stat-label">Kunlik faol (DAU)</div>
+    <div class="stat-value" style="color: #58a6ff;">{{ stats.active_today }}</div>
+    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Oxirgi 24 soatda faol</div>
   </div>
+
+  <div class="stat-card">
+    <div class="stat-label">Oylik faol (MAU)</div>
+    <div class="stat-value" style="color: #a371f7;">{{ stats.active_month }}</div>
+    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Oxirgi 30 kunda faol</div>
+  </div>
+
   <div class="stat-card">
     <div class="stat-label">Katalogdagi kitoblar</div>
     <div class="stat-value">{{ stats.total_books }}</div>
+    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Baza va keshda saqlangan</div>
   </div>
+
   <div class="stat-card">
     <div class="stat-label">Jami qidiruvlar</div>
     <div class="stat-value">{{ stats.total_searches }}</div>
+    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Bugun: {{ stats.today_searches }} ta</div>
   </div>
+
   <div class="stat-card">
-    <div class="stat-label">Kutilayotgan shikoyatlar</div>
-    <div class="stat-value" style="color: {% if stats.pending_reports > 0 %}#f85149{% else %}var(--text-main){% endif %};">
+    <div class="stat-label">Sevimli kitoblar</div>
+    <div class="stat-value" style="color: #f0883e;">{{ stats.total_favorites }}</div>
+    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Foydalanuvchilar saqlagan</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-label">Kutilayotgan murojaatlar</div>
+    <div class="stat-value" style="color: {% if stats.pending_reports > 0 %}#f85149{% else %}#3fb950{% endif %};">
       {{ stats.pending_reports }}
     </div>
+    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Ko'rib chiqilishi kerak</div>
   </div>
 </div>
 
-<div class="card">
-  <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Eng ko'p qidirilgan so'rovlar</h2>
-  <div class="table-responsive">
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Qidiruv so'zi</th>
-          <th>Qidiruvlar soni</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for query, count in top_queries %}
-        <tr>
-          <td>{{ loop.index }}</td>
-          <td><b>{{ query }}</b></td>
-          <td>{{ count }} marta</td>
-        </tr>
-        {% else %}
-        <tr>
-          <td colspan="3" style="text-align: center; color: var(--text-muted);">Qidiruvlar tarixi mavjud emas</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+  <!-- Language Distribution Widget -->
+  <div class="card">
+    <h2 style="font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span>🌐</span> Interfeys tillari taqsimoti
+    </h2>
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      {% set total_u = stats.total_users if stats.total_users > 0 else 1 %}
+      <div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; font-size: 0.9rem;">
+          <span>🇺🇿 O'zbekcha (uz)</span>
+          <b>{{ stats.lang_stats.get('uz', 0) }} ta ({{ ((stats.lang_stats.get('uz', 0) / total_u) * 100) | round(1) }}%)</b>
+        </div>
+        <div style="background: #21262d; border-radius: 6px; height: 10px; overflow: hidden;">
+          <div style="background: #2f81f7; height: 100%; width: {{ ((stats.lang_stats.get('uz', 0) / total_u) * 100) | round(1) }}%;"></div>
+        </div>
+      </div>
+
+      <div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; font-size: 0.9rem;">
+          <span>🇷🇺 Русский (ru)</span>
+          <b>{{ stats.lang_stats.get('ru', 0) }} ta ({{ ((stats.lang_stats.get('ru', 0) / total_u) * 100) | round(1) }}%)</b>
+        </div>
+        <div style="background: #21262d; border-radius: 6px; height: 10px; overflow: hidden;">
+          <div style="background: #a371f7; height: 100%; width: {{ ((stats.lang_stats.get('ru', 0) / total_u) * 100) | round(1) }}%;"></div>
+        </div>
+      </div>
+
+      <div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem; font-size: 0.9rem;">
+          <span>🇬🇧 English (en)</span>
+          <b>{{ stats.lang_stats.get('en', 0) }} ta ({{ ((stats.lang_stats.get('en', 0) / total_u) * 100) | round(1) }}%)</b>
+        </div>
+        <div style="background: #21262d; border-radius: 6px; height: 10px; overflow: hidden;">
+          <div style="background: #3fb950; height: 100%; width: {{ ((stats.lang_stats.get('en', 0) / total_u) * 100) | round(1) }}%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Search Queries -->
+  <div class="card">
+    <h2 style="font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span>🔍</span> Eng ko'p qidirilgan kitoblar va so'rovlar
+    </h2>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Qidiruv so'zi</th>
+            <th>Qidiruvlar soni</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for query, count in top_queries %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td><b>{{ query }}</b></td>
+            <td><span class="badge" style="background: rgba(47, 129, 247, 0.2); color: #58a6ff;">{{ count }} marta</span></td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Hozircha qidiruvlar tarixi yo'q</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 {% endblock %}

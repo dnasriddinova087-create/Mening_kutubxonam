@@ -5,7 +5,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.admin.dependencies import get_current_admin
+from app.admin.dependencies import AdminRole, require_roles
 from app.database.models import Admin
 from app.database.repositories.admin_repo import AdminRepository
 from app.database.repositories.book_repo import BookRepository
@@ -20,7 +20,7 @@ templates = Jinja2Templates(directory="app/admin/templates")
 async def list_books_page(
     request: Request,
     q: str | None = None,
-    admin: Admin = Depends(get_current_admin),
+    admin: Admin = Depends(require_roles(AdminRole.BOOK_MANAGER, AdminRole.SUPER_ADMIN)),
     session: AsyncSession = Depends(get_db),
 ):
     repo = BookRepository(session)
@@ -44,7 +44,7 @@ async def list_books_page(
 @router.get("/new", response_class=HTMLResponse)
 async def new_book_page(
     request: Request,
-    admin: Admin = Depends(get_current_admin),
+    admin: Admin = Depends(require_roles(AdminRole.BOOK_MANAGER, AdminRole.SUPER_ADMIN)),
 ):
     return templates.TemplateResponse(
         request=request,
@@ -62,19 +62,22 @@ async def create_book_submit(
     title: str = Form(...),
     authors: str = Form(...),
     description: str | None = Form(None),
+    language: str | None = Form("uz"),
+    genres: str | None = Form(None),
     publisher: str | None = Form(None),
     published_date: str | None = Form(None),
     isbn: str | None = Form(None),
     access_type: str = Form("info"),
     cover_url: str | None = Form(None),
     reading_url: str | None = Form(None),
-    admin: Admin = Depends(get_current_admin),
+    admin: Admin = Depends(require_roles(AdminRole.BOOK_MANAGER, AdminRole.SUPER_ADMIN)),
     session: AsyncSession = Depends(get_db),
 ):
     repo = BookRepository(session)
     admin_repo = AdminRepository(session)
 
     authors_list = [a.strip() for a in authors.split(",") if a.strip()]
+    genres_list = [g.strip() for g in genres.split(",") if g.strip()] if genres else []
     source_book_id = f"local_{uuid.uuid4().hex[:8]}"
 
     dto = BookDTO(
@@ -83,6 +86,8 @@ async def create_book_submit(
         title=title.strip(),
         authors=authors_list,
         description=description.strip() if description else None,
+        language=language.strip().lower() if language else "uz",
+        genres=genres_list,
         publisher=publisher.strip() if publisher else None,
         published_date=published_date.strip() if published_date else None,
         isbn=isbn.strip() if isbn else None,
@@ -98,7 +103,7 @@ async def create_book_submit(
         action="create_book",
         target_type="book",
         target_id=str(created_book.id),
-        details={"title": title},
+        details={"title": title, "language": language},
     )
 
     return RedirectResponse(url="/admin/books", status_code=status.HTTP_303_SEE_OTHER)
@@ -108,7 +113,7 @@ async def create_book_submit(
 async def edit_book_page(
     book_id: int,
     request: Request,
-    admin: Admin = Depends(get_current_admin),
+    admin: Admin = Depends(require_roles(AdminRole.BOOK_MANAGER, AdminRole.SUPER_ADMIN)),
     session: AsyncSession = Depends(get_db),
 ):
     repo = BookRepository(session)
@@ -133,19 +138,22 @@ async def edit_book_submit(
     title: str = Form(...),
     authors: str = Form(...),
     description: str | None = Form(None),
+    language: str | None = Form("uz"),
+    genres: str | None = Form(None),
     publisher: str | None = Form(None),
     published_date: str | None = Form(None),
     isbn: str | None = Form(None),
     access_type: str = Form("info"),
     cover_url: str | None = Form(None),
     reading_url: str | None = Form(None),
-    admin: Admin = Depends(get_current_admin),
+    admin: Admin = Depends(require_roles(AdminRole.BOOK_MANAGER, AdminRole.SUPER_ADMIN)),
     session: AsyncSession = Depends(get_db),
 ):
     repo = BookRepository(session)
     admin_repo = AdminRepository(session)
 
     authors_list = [a.strip() for a in authors.split(",") if a.strip()]
+    genres_list = [g.strip() for g in genres.split(",") if g.strip()] if genres else []
 
     await repo.update_book_details(
         book_id=book_id,
@@ -158,6 +166,8 @@ async def edit_book_submit(
         isbn=isbn.strip() if isbn else None,
         access_type=access_type,
         reading_url=reading_url.strip() if reading_url else None,
+        language=language.strip().lower() if language else None,
+        genres=genres_list,
     )
 
     await admin_repo.log_audit(
@@ -165,7 +175,7 @@ async def edit_book_submit(
         action="update_book",
         target_type="book",
         target_id=str(book_id),
-        details={"title": title},
+        details={"title": title, "language": language},
     )
 
     return RedirectResponse(url="/admin/books", status_code=status.HTTP_303_SEE_OTHER)
@@ -174,7 +184,7 @@ async def edit_book_submit(
 @router.post("/{book_id}/toggle-archive")
 async def toggle_archive_book(
     book_id: int,
-    admin: Admin = Depends(get_current_admin),
+    admin: Admin = Depends(require_roles(AdminRole.BOOK_MANAGER, AdminRole.SUPER_ADMIN)),
     session: AsyncSession = Depends(get_db),
 ):
     repo = BookRepository(session)
@@ -189,6 +199,30 @@ async def toggle_archive_book(
             action="archive_book" if new_status else "unarchive_book",
             target_type="book",
             target_id=str(book_id),
+        )
+
+    return RedirectResponse(url="/admin/books", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.post("/{book_id}/delete")
+async def delete_book_submit(
+    book_id: int,
+    admin: Admin = Depends(require_roles(AdminRole.SUPER_ADMIN)),
+    session: AsyncSession = Depends(get_db),
+):
+    repo = BookRepository(session)
+    admin_repo = AdminRepository(session)
+
+    book = await repo.get_by_id(book_id)
+    if book:
+        title = book.original_title
+        await repo.delete_book(book_id)
+        await admin_repo.log_audit(
+            admin_id=admin.id,
+            action="delete_book",
+            target_type="book",
+            target_id=str(book_id),
+            details={"title": title},
         )
 
     return RedirectResponse(url="/admin/books", status_code=status.HTTP_303_SEE_OTHER)

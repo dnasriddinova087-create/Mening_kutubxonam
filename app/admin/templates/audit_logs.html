@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Audit jurnali — KITOBXON AI Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">📜 Audit jurnali (Xavfsizlik loglari)</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Administratorlar tomonidan amalga oshirilgan barcha xavfsizlik va boshqaruv amallari</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>#ID</th>
+          <th>Vaqt (UTC)</th>
+          <th>Admin ID</th>
+          <th>Amal (Action)</th>
+          <th>Obyekt turi</th>
+          <th>Obyekt ID</th>
+          <th>Tafsilotlar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td>#{{ log.id }}</td>
+          <td style="color: var(--text-muted); font-size: 0.85rem;">{{ log.created_at.strftime('%Y-%m-%d %H:%M:%S') if log.created_at else '—' }}</td>
+          <td><b>{{ log.admin_id or 'Tizim' }}</b></td>
+          <td>
+            {% if log.action in ('login', 'create_book', 'unarchive_book', 'unblock_user') %}
+            <span class="badge badge-free">{{ log.action }}</span>
+            {% elif log.action in ('update_book', 'resolve_report', 'update_settings', 'update_role') %}
+            <span class="badge badge-preview">{{ log.action }}</span>
+            {% else %}
+            <span class="badge badge-archived">{{ log.action }}</span>
+            {% endif %}
+          </td>
+          <td><code>{{ log.target_type or '—' }}</code></td>
+          <td><code>{{ log.target_id or '—' }}</code></td>
+          <td style="font-size: 0.85rem; color: var(--text-muted); max-width: 300px; word-break: break-all;">
+            {{ log.details_json or '{}' }}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">Audit loglar mavjud emas</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

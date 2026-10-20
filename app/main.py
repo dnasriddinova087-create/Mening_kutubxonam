@@ -110,15 +110,15 @@ async def main() -> None:
     dp.message.middleware(RateLimitMiddleware(limit_seconds=0.5))
     dp.callback_query.middleware(RateLimitMiddleware(limit_seconds=0.5))
 
-    # Include Handlers
+    # Include Handlers - Specific command & button routers first, search text catch-all last
     dp.include_router(start.router)
-    dp.include_router(search.router)
-    dp.include_router(book_detail.router)
+    dp.include_router(language.router)
     dp.include_router(favorites.router)
     dp.include_router(reading_list.router)
     dp.include_router(profile.router)
     dp.include_router(recommendations.router)
-    dp.include_router(language.router)
+    dp.include_router(book_detail.router)
+    dp.include_router(search.router)
     dp.include_router(errors.router)
 
     # Setup BotFather menu commands

@@ -1,4 +1,5 @@
 from datetime import UTC, datetime
+from typing import Any
 
 from sqlalchemy import func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -154,24 +155,35 @@ class BookRepository:
         isbn: str | None,
         access_type: str,
         reading_url: str | None,
+        language: str | None = None,
+        genres: list[str] | None = None,
     ) -> bool:
-        stmt = (
-            update(Book)
-            .where(Book.id == book_id)
-            .values(
-                original_title=title,
-                normalized_title=normalize_query(title).lower(),
-                authors=authors,
-                description=description,
-                cover_url=cover_url,
-                publisher=publisher,
-                published_date=published_date,
-                isbn=isbn,
-                access_type=access_type,
-                reading_url=reading_url,
-                updated_at=datetime.now(UTC),
-            )
-        )
+        values: dict[str, Any] = {
+            "original_title": title,
+            "normalized_title": normalize_query(title).lower(),
+            "authors": authors,
+            "description": description,
+            "cover_url": cover_url,
+            "publisher": publisher,
+            "published_date": published_date,
+            "isbn": isbn,
+            "access_type": access_type,
+            "reading_url": reading_url,
+            "updated_at": datetime.now(UTC),
+        }
+        if language is not None:
+            values["language"] = language
+        if genres is not None:
+            values["genres"] = genres
+
+        stmt = update(Book).where(Book.id == book_id).values(**values)
+        result = await self.session.execute(stmt)
+        await self.session.commit()
+        return result.rowcount > 0
+
+    async def delete_book(self, book_id: int) -> bool:
+        from sqlalchemy import delete
+        stmt = delete(Book).where(Book.id == book_id)
         result = await self.session.execute(stmt)
         await self.session.commit()
         return result.rowcount > 0

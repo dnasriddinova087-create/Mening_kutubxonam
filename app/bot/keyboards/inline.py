@@ -15,9 +15,18 @@ def get_search_results_keyboard(
     # Book items
     for b in books:
         if b.id:
-            label = f"📖 {truncate_text(b.title, 28)}"
+            lang_tag = ""
+            if b.language:
+                l_clean = b.language.lower()
+                if l_clean in ("uz", "uzb"):
+                    lang_tag = " [UZ]"
+                elif l_clean in ("ru", "rus"):
+                    lang_tag = " [RU]"
+                elif l_clean in ("en", "eng"):
+                    lang_tag = " [EN]"
+            label = f"📖 {truncate_text(b.title, 24)}{lang_tag}"
             if b.authors:
-                label += f" — {truncate_text(b.authors[0], 16)}"
+                label += f" — {truncate_text(b.authors[0], 14)}"
             cb_data = f"book:view:{b.id}"
             buttons.append([InlineKeyboardButton(text=label, callback_data=cb_data)])
 
@@ -106,12 +115,32 @@ def get_reading_status_keyboard(book_id: int, lang: str = "uz") -> InlineKeyboar
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
-def get_language_keyboard() -> InlineKeyboardMarkup:
-    """Inline keyboard for switching languages."""
+def get_language_keyboard(lang: str = "uz") -> InlineKeyboardMarkup:
+    """Inline keyboard for switching interface language."""
     buttons = [
         [InlineKeyboardButton(text="🇺🇿 O'zbekcha", callback_data="lang:uz")],
         [InlineKeyboardButton(text="🇷🇺 Русский", callback_data="lang:ru")],
         [InlineKeyboardButton(text="🇬🇧 English", callback_data="lang:en")],
+        [InlineKeyboardButton(text=t(lang, "language.book_lang_btn"), callback_data="booklang:menu")],
+    ]
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
+
+
+def get_book_language_keyboard(
+    current_langs: list[str], lang: str = "uz"
+) -> InlineKeyboardMarkup:
+    """Inline keyboard for configuring preferred book languages in search."""
+    uz_check = "✅ " if "uz" in current_langs else ""
+    ru_check = "✅ " if "ru" in current_langs else ""
+    en_check = "✅ " if "en" in current_langs else ""
+    all_check = "✅ " if ("uz" in current_langs and "ru" in current_langs and "en" in current_langs) else ""
+
+    buttons = [
+        [InlineKeyboardButton(text=f"{uz_check}🇺🇿 O'zbekcha kitoblar", callback_data="booklang:toggle:uz")],
+        [InlineKeyboardButton(text=f"{ru_check}🇷🇺 Русские книги", callback_data="booklang:toggle:ru")],
+        [InlineKeyboardButton(text=f"{en_check}🇬🇧 English books", callback_data="booklang:toggle:en")],
+        [InlineKeyboardButton(text=f"{all_check}🌍 Barcha tillar / Все языки", callback_data="booklang:toggle:all")],
+        [InlineKeyboardButton(text=t(lang, "book.btn_back"), callback_data="lang:menu")],
     ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
