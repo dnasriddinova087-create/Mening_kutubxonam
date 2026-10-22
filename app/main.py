@@ -91,16 +91,11 @@ async def get_fsm_storage():
     return MemoryStorage()
 
 
-async def main() -> None:
-    setup_logging()
-    logger.info("Starting KITOBXON AI Bot...")
-
+async def run_bot() -> None:
+    """Initialize and start Telegram bot polling loop."""
     if not settings.BOT_TOKEN:
-        logger.error("BOT_TOKEN is not configured! Please provide BOT_TOKEN in .env file.")
+        logger.warning("BOT_TOKEN is not configured! Telegram Bot will not run.")
         return
-
-    # Initialize Database
-    await init_db()
 
     bot = Bot(
         token=settings.BOT_TOKEN,
@@ -140,5 +135,17 @@ async def main() -> None:
         logger.info("Bot stopped.")
 
 
+async def main() -> None:
+    setup_logging()
+    logger.info("Starting KITOBXON AI Bot...")
+    if not settings.BOT_TOKEN:
+        logger.error("BOT_TOKEN is not configured! Please provide BOT_TOKEN in .env file.")
+        return
+
+    await init_db()
+    await run_bot()
+
+
 if __name__ == "__main__":
     asyncio.run(main())
+

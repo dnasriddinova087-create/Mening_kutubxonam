@@ -39,8 +39,23 @@ class Settings(BaseSettings):
     # Public base URL
     PUBLIC_BASE_URL: str = Field(default="http://localhost:8000")
 
+    PORT: int | None = Field(default=None, description="Cloud provider assigned port (e.g. Render)")
+    AUTO_SEED: bool = Field(default=True, description="Auto-seed books if catalog is empty")
+    DEFAULT_ADMIN_USER: str = Field(default="admin")
+    DEFAULT_ADMIN_PASSWORD: str = Field(default="adminpass123")
+
     # Logging
     LOG_LEVEL: str = Field(default="INFO")
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def fix_database_url(cls, v):
+        if isinstance(v, str):
+            if v.startswith("postgres://"):
+                return v.replace("postgres://", "postgresql+asyncpg://", 1)
+            if v.startswith("postgresql://") and not v.startswith("postgresql+"):
+                return v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return v
 
     @field_validator("ADMIN_TELEGRAM_IDS", mode="before")
     @classmethod
@@ -57,5 +72,10 @@ class Settings(BaseSettings):
     def is_sqlite(self) -> bool:
         return self.DATABASE_URL.startswith("sqlite")
 
+    @property
+    def effective_admin_port(self) -> int:
+        return self.PORT or self.ADMIN_PORT
+
 
 settings = Settings()
+
